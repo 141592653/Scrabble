@@ -18,7 +18,7 @@ let get_turn () = !turn
 (* ********************** Json parsing **************************** *)
 let is_valid_letter c =
   let n = int_of_char c in 
-  n = 95 || (n>=65 && n<=90)
+  n = 95 || (n>=65 && n<=90) || (n>=97 && n<=122)
    
 
 (*Récupère le nom, le score et les lettres du joueur p *)
@@ -27,7 +27,8 @@ let parse_player p =
   match score_letters with
       |`Assoc l -> begin
 		  match l with
-		  |[("score", `Int score);("letters",`String s)] ->
+		  |[("score", `Int score);("letters",`String s_a)] ->
+		    let s = String.uppercase_ascii s_a in 
 		    String.iter (fun c -> if is_valid_letter c
 					  then ()
 					else
@@ -116,11 +117,32 @@ let json_parsing_test _ =
 (* *********************** Fin Json parsing *************************** *)
 
 (* *********************** Parsing du plateau ************ *)
+let board_line_of_string s =
+  if String.length s <= 15 then
+    begin
+      let bl = Array.make 15 ' ' in (*for board line*)
+      String.iteri (fun i c ->
+		    if is_valid_letter c || int_of_char c = 32 then
+		      bl.(i) <- c
+		    else
+		      failwith "Unknown character."		      
+		   ) s;
+      bl
+    end
+  else
+    failwith "A line has to many characters."
+
+
+let blos_test _ =
+  assert_equal (board_line_of_string "aa B") [|'a';'a';' ';'B';' ';' ';' ';' ';
+					     ' ';' ';' ';' ';' ';' ';' '|]
+
 					
   
   
 
-let tests = ["json parsing" >:: json_parsing_test]
+let tests = ["json parsing" >:: json_parsing_test;
+	    "board line of string" >:: blos_test]
   
   
   

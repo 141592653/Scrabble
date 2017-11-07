@@ -1,5 +1,5 @@
 PACKAGES=-package oUnit -package yojson
-BUILD=ocamlbuild \
+BUILD=ocamlbuild -use-ocamlfind \
 	-cflags "-g -w +A"\
 	$(PACKAGES)
 
