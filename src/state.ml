@@ -2,6 +2,9 @@
 
 open OUnit2
 open Yojson
+open Player
+
+let max_nb_letters = 7
 
 let name = ref ""
 let players = ref [||]
@@ -12,29 +15,41 @@ let get_name () = !name
 let get_players () = !players
 let get_turn () = !turn
 
-(* ********************** Début parsing **************************** *)
+(* ********************** Json parsing **************************** *)
+let is_valid_letter c =
+  let n = int_of_char c in 
+  n = 95 || (n>=65 && n<=90)
+   
 
-let parse_pos p = match p with
-    |`Assoc l -> begin
-		match l with
-		|[("l", `Int line);("c",`Int column)]
-		 when line <= 14 && column <= 14 -> (line,column)
-		|_ -> failwith "Une position est mal renseignée"
-    end
-   |_-> failwith "Une position est mal renseignée"
-
-let parse_pos_test _ =
-  assert_equal (parse_pos (`Assoc [("l",`Int 2);("c",`Int 4)])) (2,4)
-
+(*Récupère le nom, le score et les lettres du joueur p *)
 let parse_player p =
-  let (name,pos) = p in
-  (name,parse_pos pos)
-
+  let (name,score_letters) = p in
+  match score_letters with
+      |`Assoc l -> begin
+		  match l with
+		  |[("score", `Int score);("letters",`String s)] ->
+		    String.iter (fun c -> if is_valid_letter c
+					  then ()
+					else
+					  failwith "Une lettre d'un jeu \
+						    d'un joueur est mal \
+						    renseignée"
+				) s;
+		    if String.length s <= max_nb_letters then
+		      new humanPlayer name score s
+		    else
+		      failwith "Un joueur a un jeu de plus de 8 lettres"       
+		  |_ -> failwith "Un joueur est mal renseigné"
+		end
+    |_-> failwith "Une position est mal renseignée"
+  
+  
+      
 (*parse players ;D *)
 let parse_players p =
   match p with
   | `Assoc l -> List.map parse_player l
-  | _ -> failwith ("The player structure  should be an Associative list")
+  | _ -> failwith ("The player structure should be an Associative list")
 		 
 
 (*parse name players map or turn*)
@@ -42,12 +57,15 @@ let parse_npmt  players_tmp map_file npmt =
   match fst npmt with
   |"name" -> begin
 	     match snd npmt with
-	       |`String s -> name := s
+	       |`String s -> name := s;
+			     if !map_file = "" then
+			       map_file := s^".txt"
+				       
               |_ -> failwith "The name of a map should be a string"
 	   end
   |"map" -> begin
 	    match snd npmt with
-	      |`String s -> map_file := s
+	      |`String s -> map_file := s;
              |_ -> failwith "The name of the file containing the map \
 			     should be a string"
 	  end
@@ -60,9 +78,49 @@ let parse_npmt  players_tmp map_file npmt =
   |"players" -> players_tmp := parse_players (snd npmt)
   |_ -> failwith ("The entry "^(fst npmt)^ " is not understood")
 
-		 
+(*This is the parser of a json file*)
+let parse_main_json json_a = 
+  let players_tmp = ref [] and map_file = ref "" in
+  begin
+    match json_a with
+    | `Assoc l -> List.iter (parse_npmt players_tmp map_file) l
+    | _ -> failwith ("The main structure of should be an Associative list")
+  end;
+  (!players_tmp,!map_file)
 
-let tests = ["parse position">::parse_pos_test]
+(*joueur temporaire*)
+let default_player = new Player.humanPlayer "" 0 ""
+
+let json_from_file s =
+  try
+    Yojson.Basic.from_channel (open_in s)
+  with
+  |Json_error log ->
+    failwith ("The file is not a json file.\
+		Here is the log of the json parser : "
+	      ^log)
+			 
+let open_game json_file =
+  let (ps,b) = parse_main_json (json_from_file json_file) in
+  players := Array.make (List.length ps) default_player;
+  List.iteri (fun i p -> !players.(i)<-p) ps
+  
+    
+let json_parsing_test _ =
+  open_game "test/parse_test.json";
+  assert_equal (get_turn ()) 1;
+  assert_equal !players.(0)#get_name  "beauGosseDu84";
+  assert_equal !players.(0)#get_letters  "AAUBYCE";
+  assert_equal !players.(1)#get_score   5
+
+(* *********************** Fin Json parsing *************************** *)
+
+(* *********************** Parsing du plateau ************ *)
+					
+  
+  
+
+let tests = ["json parsing" >:: json_parsing_test]
   
   
   

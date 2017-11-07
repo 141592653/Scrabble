@@ -1,23 +1,20 @@
-(** This module contains the abstract class Player
- * and the classes for human and AI Player *)
+(** Ce module contient les classes représentant 
+ *  les joueurs humains ou non humains*)
 
 
-(**This class represents eather a human player or an AI player*)
-class virtual player : string -> Hex.pos ->
+(**Cette classe représente un joueur humain ou non humain*)
+class virtual player : string -> int -> string ->
        object
 			 
-	 (**Position of the player*)
-	 val pos : Hex.pos
 		     
-	 (**Name of the player *)
+	 (**Nom du joueur *)
 	 val name : string
 
-	 (**This is the move computed by play*)
-	 val next_move : Hex.move
+	 (**Score courant du joueur*)
+	 val score : int
 
-	 (**set to false by play, it's value is true
-	  *  when next_move is the correct move*)
-	 val is_ready : bool
+	 (**Le jeu du joueur*)
+	 val letters : string
 			   
 	 (**Asks the player to play*)
 	 method virtual play : unit -> unit
@@ -25,21 +22,17 @@ class virtual player : string -> Hex.pos ->
 	 (** Name getter*)
 	 method get_name : string
 
-	 (** Position getter*)
-	 method get_pos : Hex.pos
+	 (**Score getter*)
+	 method get_score : int
 
-	 (** Is_ready getter*)
-	 method is_ready : bool
+	 (**Letters getter*)
+	 method get_letters : string
 
-	 (** Is_ready setter*)
-	 method set_ready : bool -> unit
 
-	 (** Moves the player*)
-	 method move : Hex.move -> unit
        end
 
 (** This class represents human players *)
-class humanPlayer : string -> Hex.pos ->
+class humanPlayer : string -> int -> string ->
       object
 	inherit player
 	method  play : unit -> unit

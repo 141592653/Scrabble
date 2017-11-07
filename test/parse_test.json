@@ -1,0 +1,24 @@
+{
+    "name" : "Niveau 1",
+    "players" :
+    {
+	"beauGosseDu84" : {
+	    "score" : 2,
+	    "letters" : "AAUBYCE"
+	},
+	"42" : {
+	    "score" : 5,
+	    "letters" : "OYVYU"
+	},
+	"cotcotcodète" : {
+	    "score" : 8,
+	    "letters" : "__UIOI"
+	},
+	"winteriscoming" :{
+	    "score" : 10,
+	    "letters" : "EEEE_"
+	}
+    },
+    "map" : "test/parse_test.txt",
+    "turn" : 1
+}

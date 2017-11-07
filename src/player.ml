@@ -1,25 +1,20 @@
 open OUnit2
        
-class virtual player (a_name:string) (a_pos:Hex.pos) =
+class virtual player (a_name:string) (a_score:int) (a_letters:string)=
 	object (self)
 	  val name = a_name
-	  val mutable pos = a_pos
-	  val mutable next_move = (Hex.W,0)
-	  val mutable is_ready = false
-	  method virtual play : unit -> unit
+	  val mutable score = a_score
+	  val mutable letters = a_letters
+      	  method virtual play : unit -> unit
 	  method get_name = name
-	  method get_pos = pos
-	  method is_ready = is_ready
-	  method set_ready a_is_ready = is_ready <- a_is_ready
-						      
-	  method move m =
-	    pos <- Hex.move_n pos m;
-	    is_ready <- false
+	  method get_letters = letters
+	  method get_score = score
+	 
 	end
 
-class humanPlayer (a_name:string) (a_pos:Hex.pos) =
+class humanPlayer (a_name:string) (a_score:int) (a_letters:string)  =
 object (self)
-  inherit player a_name a_pos
+  inherit player a_name a_score a_letters
   (*TODO*)
   method play () = ()
 end	 
