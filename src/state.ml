@@ -2,13 +2,13 @@
 
 open OUnit2
 open Yojson
-open Player
 
 let max_nb_letters = 7
 
 let name = ref ""
 let players = ref [||]
 let turn = ref 0
+let bag = ref ""
 let board = Array.make_matrix 15 15 ' '
 
 let get_name () = !name
@@ -37,7 +37,7 @@ let parse_player p =
 						    renseignée"
 				) s;
 		    if String.length s <= max_nb_letters then
-		      new humanPlayer name score s
+		      new Player.humanPlayer name score s
 		    else
 		      failwith "Un joueur a un jeu de plus de 8 lettres"       
 		  |_ -> failwith "Un joueur est mal renseigné"
@@ -77,6 +77,11 @@ let parse_npmt  players_tmp map_file npmt =
 			      should be a string"
 	   end
   |"players" -> players_tmp := parse_players (snd npmt)
+  |"bag" -> begin
+	    match snd npmt with
+	      |`String s -> bag := s;
+             |_ -> failwith "The bag must be a string"
+	  end
   |_ -> failwith ("The entry "^(fst npmt)^ " is not understood")
 
 (*This is the parser of a json file*)
@@ -148,42 +153,44 @@ let open_game json_file =
 
 (* *********************** End parsing ********************************* *)
 
-(* ************************ Printing *********************************** *)
-let convert_blanks c =
-  if c = ' ' then
-    '#'
-  else
-    c
-      
-let pp_print f g = 
-  if not (Array.length g = 0) then 
-    begin
-      Format.fprintf f "@[<v 0>";
+(* *********************** Bag gestion ********************************* *)
+(* creation of the bag*)
+let distrib = [('_',2);('A',9);('B',2);('C',2);('D',3);('E',15);('F',2);
+	       ('G',2);('H',2);('I',8);('J',1);('K',1);('L',5);('M',3);
+	       ('N',6);('O',6);('P',2);('Q',1);('R',6);('S',6);('T',6);
+	       ('U',6);('V',2);('W',1);('X',1);('Y',1);('Z',1)]
+		
+let bag_list = ref []
+	    
+let add_letter c =
+  bag_list := !bag_list @ Array.to_list (Array.make (snd c) (fst c))
 
-      (*ligne du haut*)
-      for _ = 1 to 2*Array.length g.(0) + 1 do
-	Format.fprintf f "_";
-      done;
-      Format.fprintf f "@,";
+(*creation of a new random bag*)
+let new_bag () =
+  List.iter add_letter distrib;
+  Random.self_init ();
+  let tmp = List.map (fun c -> (Random.bits (), c)) !bag_list in
+  let sorted = List.sort compare tmp in
+  bag_list := List.map snd sorted
+  
 
-      (*corps*)
-      for i = 0 to Array.length g - 1 do 
-	Format.fprintf f "|";
-	for j = 0 to Array.length g.(i)-2 do 
-	  Format.fprintf f "%c " (convert_blanks g.(i).(j))
-	done;
-	Format.fprintf f "%c" (convert_blanks
-				 g.(i).(Array.length g.(i)-1));
-	Format.fprintf f "|@," 
-      done;
 
-      (*ligne du bas*)
-      for _ = 1 to 2*Array.length g.(0) + 1 do(*int_of_float ((2.*.float_of_int (Array.length g.(0)) +. 2.)*. (16.9/.13.)) do*)
-	Format.fprintf f "‾";
-      done; 
-      
-      Format.fprintf f "@,@]"
-    end
+let pick_letters n =
+  try (*si on a assez de lettres*)
+    let ret = String.sub !bag 0 n in
+    bag := String.sub !bag n (String.length !bag - n);
+    ret
+  with (*sinon*)
+    _ -> let ret = !bag in
+	 bag := "";
+	 ret
+	 
+  
+				       
+
+
+	     
+
 
 
 
@@ -194,8 +201,7 @@ let json_parsing_test _ =
   assert_equal !players.(0)#get_letters  "AAUBYCE";
   assert_equal !players.(1)#get_score   5;
   assert_equal board.(14) [|'a';'a';' ';'B';' ';' ';' ';' ';
-			    ' ';' ';' ';' ';' ';' ';' '|];
-  pp_print Format.std_formatter board
+			    ' ';' ';' ';' ';' ';' ';' '|]
 
 let tests = ["json parsing" >:: json_parsing_test;
 	    "board line of string" >:: blos_test]

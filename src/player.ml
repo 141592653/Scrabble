@@ -9,6 +9,13 @@ class virtual player (a_name:string) (a_score:int) (a_letters:string)=
 	  method get_name = name
 	  method get_letters = letters
 	  method get_score = score
+	  method print b =
+	    Format.printf "@[<v 0>C'est au tour de %s de jouer.@,\
+			   Votre jeu est : %s@,\
+			   Votre score est : %d@, \
+			   Voici l'état du jeu : @," name letters score;
+	    Ui.pp_board Format.std_formatter b;
+	    Format.printf "@]"
 	 
 	end
 

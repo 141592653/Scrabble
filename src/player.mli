@@ -28,6 +28,9 @@ class virtual player : string -> int -> string ->
 	 (**Letters getter*)
 	 method get_letters : string
 
+	 (**Prints the name and the game of a player*)
+	 method print : char array array -> unit
+
 
        end
 

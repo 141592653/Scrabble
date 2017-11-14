@@ -1,4 +1,5 @@
 (** Note sur le format de fichier. Un fichier json a la forme : 
+ * letouzey@irif.fr
  *
  * [{
  *   "name" : "Niveau 1",
