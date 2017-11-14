@@ -15,6 +15,9 @@ class virtual player : string -> int -> string ->
 
 	 (**Le jeu du joueur*)
 	 val letters : string
+
+	 (**True if the player has given up*)
+	 val give_up : bool
 			   
 	 (**Asks the player to play*)
 	 method virtual play : unit -> unit
