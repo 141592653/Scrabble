@@ -5,23 +5,20 @@ class virtual player (a_name:string) (a_score:int) (a_letters:string)=
 	  val name = a_name
 	  val mutable score = a_score
 	  val mutable letters = a_letters
-      	  method virtual play : unit -> unit
+	  val mutable give_up = false
+      	  method virtual play : string -> unit
+	  method virtual is_human : bool
 	  method get_name = name
 	  method get_letters = letters
 	  method get_score = score
-	  method print b =
-	    Format.printf "@[<v 0>C'est au tour de %s de jouer.@,\
-			   Votre jeu est : %s@,\
-			   Votre score est : %d@, \
-			   Voici l'état du jeu : @," name letters score;
-	    Ui.pp_board Format.std_formatter b;
-	    Format.printf "@]"
+	  method given_up = give_up
+			  
 	 
 	end
 
 class humanPlayer (a_name:string) (a_score:int) (a_letters:string)  =
 object (self)
   inherit player a_name a_score a_letters
-  (*TODO*)
-  method play () = ()
+  method is_human = true
+  method play s = print_string s
 end	 

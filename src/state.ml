@@ -138,6 +138,7 @@ let open_board file_name =
     done
   with
   |End_of_file -> ()
+  |Invalid_argument _ -> failwith "Le plateau contient trop de lignes."
 
 		    
 

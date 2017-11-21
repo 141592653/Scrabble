@@ -1,0 +1,25 @@
+{
+    "name" : "Niveau 1",
+    "players" :
+    {
+	"beauGosseDu84" : {
+	    "score" : 2,
+	    "letters" : ""
+	},
+	"42" : {
+	    "score" : 5,
+	    "letters" : ""
+	},
+	"cotcotcodète" : {
+	    "score" : 8,
+	    "letters" : ""
+	},
+	"winteriscoming" :{
+	    "score" : 10,
+	    "letters" : ""
+	}
+    },
+    "map" : "test/board.txt",
+    "bag" : "MJNUNIEXDOLOAKGGUQUIITNAZSMILEESEEETUE_IERLEFBIRUAESRBETDSSECAANHFR_NNETAARVOMTOOAESRYUTAPVHLIEWIOCPDL",
+    "turn" : 1
+}

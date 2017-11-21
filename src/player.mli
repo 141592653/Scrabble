@@ -20,7 +20,7 @@ class virtual player : string -> int -> string ->
 	 val give_up : bool
 			   
 	 (**Asks the player to play*)
-	 method virtual play : unit -> unit
+	 method virtual play : string -> unit
 
 	 (** Name getter*)
 	 method get_name : string
@@ -31,8 +31,12 @@ class virtual player : string -> int -> string ->
 	 (**Letters getter*)
 	 method get_letters : string
 
-	 (**Prints the name and the game of a player*)
-	 method print : char array array -> unit
+	 (**Give up getter*)
+	 method given_up : bool
+
+	 (**Is theµ player human*)
+	 method virtual is_human : bool
+
 
 
        end
@@ -41,5 +45,6 @@ class virtual player : string -> int -> string ->
 class humanPlayer : string -> int -> string ->
       object
 	inherit player
-	method  play : unit -> unit
+	method play : string -> unit
+	method is_human : bool
       end
