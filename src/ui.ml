@@ -55,23 +55,31 @@ let rec ask_bool ()  =
   |_ -> not_understood ();
 	ask_bool ()
 
+let rec ask_string () =
+  Printf.printf "[Entrez un mot] ";
+  read_line ()
+	    
 let rec ask_int () =
-  Printf.printf "[Entrez un nombre]";
+  Printf.printf "[Entrez un nombre] ";
   try
     int_of_string (read_line ())
   with
     _ -> not_understood ();
 	 ask_int ()
 
-let ask_new_player () =
-  Printf.printf ""
+		 
+
+let ask_new_player i =
+  Printf.printf "Joueur %d, quel est votre pseudo ?\n";
+  ask_string ()
+  
 
 let ask_new_game () = 
   Printf.printf "Combien y a-t-il de joueur ? \
 		 (l'ordre des joueurs ne sera pas l'ordre de jeu)) \n";
   let nb_players = ask_int () in
-  for _ = 1 to nb_players do
-    ask_new_player ()
+  for i = 1 to nb_players do
+    ask_new_player i
   done
 
   
