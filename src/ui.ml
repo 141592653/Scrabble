@@ -36,7 +36,7 @@ let pp_board f g =
 
 (*Pretty printing of a player*)
 let pp_player p b =
-  Format.printf "@[<v 0>C'est au tour de %s de jouer.@,\
+ Format.printf "@[<v 0>C'est au tour de %s de jouer.@,\
 		 Votre jeu est : %s@,\
 		 Votre score est : %d@, \
 		 Voici l'état du jeu : @,"
@@ -45,16 +45,34 @@ let pp_player p b =
   Format.printf "@]"
 
 let not_understood () =
-  Format.printf "Je n'ai pas compris ce que vous venez de taper.@,"
+  Printf.printf "Je n'ai pas compris ce que vous venez de taper.\n"
 		 
 let rec ask_bool ()  =
-  Format.printf "[O/o pour Oui, N/n pour Non]";
+  Printf.printf "[O/o pour Oui, N/n pour Non] ";
   match String.uppercase_ascii (read_line ()) with
   |"O" -> true
   |"N" -> false
   |_ -> not_understood ();
 	ask_bool ()
 
+let rec ask_int () =
+  Printf.printf "[Entrez un nombre]";
+  try
+    int_of_string (read_line ())
+  with
+    _ -> not_understood ();
+	 ask_int ()
+
+let ask_new_player () =
+  Printf.printf ""
+
+let ask_new_game () = 
+  Printf.printf "Combien y a-t-il de joueur ? \
+		 (l'ordre des joueurs ne sera pas l'ordre de jeu)) \n";
+  let nb_players = ask_int () in
+  for _ = 1 to nb_players do
+    ask_new_player ()
+  done
 
   
 let rec main_loop () =

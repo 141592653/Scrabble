@@ -1,14 +1,13 @@
 let time_limit = ref 100
 		
 let main_func file =
-  Format.printf "@[<v 0>*********************** Bienvenue dans Scrabble\
-		  **************************** @,";
-   Format.printf " Voulez vous créer une nouvelle partie ? @,@]";
+  Printf.printf "*********************** Bienvenue dans Scrabble x\
+		  **************************** \n";
+   Printf.printf "Voulez vous créer une nouvelle partie ? \n";
    if Ui.ask_bool () then
-     Format.printf "cool"
+     Ui.ask_new_game ()
    else
-     Format.printf "oooh";
-   Format.printf "@]"
+     Printf.printf "oooh"
 
 let main() = 
   Arg.parse
@@ -18,3 +17,6 @@ let main() =
     main_func "Ce programme permet de jouer au scrabble"
 
 let () = main()
+
+
+	    
