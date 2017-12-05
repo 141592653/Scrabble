@@ -55,7 +55,7 @@ let rec ask_bool ()  =
   |_ -> not_understood ();
 	ask_bool ()
 
-let rec ask_string () =
+let  ask_string () =
   Printf.printf "[Entrez un mot] ";
   read_line ()
 	    
@@ -78,9 +78,12 @@ let ask_new_game () =
   Printf.printf "Combien y a-t-il de joueur ? \
 		 (l'ordre des joueurs ne sera pas l'ordre de jeu)) \n";
   let nb_players = ask_int () in
-  for i = 1 to nb_players do
-    ask_new_player i
-  done
+  let player_names = Array.make nb_players "" in 
+  for i = 0 to nb_players - 1 do
+    player_names.(i) <- ask_new_player i
+  done;
+  State.new_game player_names
+  
 
   
 let rec main_loop () =

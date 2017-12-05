@@ -34,6 +34,9 @@
  * - Des espaces (ce sont des cases vides)
  *)
 
+(**Nouvelle partie*)
+val new_game : string array -> unit
+
 (**Nom de la map*)
 val get_name : unit -> string
 					 
