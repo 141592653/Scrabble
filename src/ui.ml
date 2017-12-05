@@ -70,7 +70,7 @@ let rec ask_int () =
 		 
 
 let ask_new_player i =
-  Printf.printf "Joueur %d, quel est votre pseudo ?\n";
+  Printf.printf "Joueur %d, quel est votre pseudo ?\n" i;
   ask_string ()
   
 
