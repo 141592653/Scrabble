@@ -17,9 +17,7 @@ let get_turn () = !turn
 
 (* ********************** Json parsing **************************** *)
 let is_valid_letter c =
-  let n = int_of_char c in 
-  n = 95 || (n>=65 && n<=90) || (n>=97 && n<=122)
-   
+  c = '_' || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')
 
 (*Récupère le nom, le score et les lettres du joueur p *)
 let parse_player p =
@@ -28,7 +26,7 @@ let parse_player p =
       |`Assoc l -> begin
 		  match l with
 		  |[("score", `Int score);("letters",`String s_a)] ->
-		    let s = String.uppercase_ascii s_a in 
+		    let s = String.uppercase_ascii s_a in
 		    String.iter (fun c -> if is_valid_letter c
 					  then ()
 					else
@@ -39,19 +37,19 @@ let parse_player p =
 		    if String.length s <= max_nb_letters then
 		      new Player.humanPlayer name score s
 		    else
-		      failwith "Un joueur a un jeu de plus de 8 lettres"       
+		      failwith "Un joueur a un jeu de plus de 8 lettres"
 		  |_ -> failwith "Un joueur est mal renseigné"
 		end
     |_-> failwith "Une position est mal renseignée"
-  
-  
-      
+
+
+
 (*parse players ;D *)
 let parse_players p =
   match p with
   | `Assoc l -> List.map parse_player l
   | _ -> failwith ("The player structure should be an Associative list")
-		 
+
 
 (*parse name players map or turn*)
 let parse_npmt  players_tmp map_file npmt =
@@ -61,7 +59,7 @@ let parse_npmt  players_tmp map_file npmt =
 	       |`String s -> name := s;
 			     if !map_file = "" then
 			       map_file := s^".txt"
-				       
+
               |_ -> failwith "The name of a map should be a string"
 	   end
   |"map" -> begin
@@ -85,7 +83,7 @@ let parse_npmt  players_tmp map_file npmt =
   |_ -> failwith ("The entry "^(fst npmt)^ " is not understood")
 
 (*This is the parser of a json file*)
-let parse_main_json json_a = 
+let parse_main_json json_a =
   let players_tmp = ref [] and map_file = ref "" in
   begin
     match json_a with
@@ -105,7 +103,7 @@ let json_from_file s =
     failwith ("The file is not a json file.\
 		Here is the log of the json parser : "
 	      ^log)
-			 
+
 
 
 let board_line_of_string s =
@@ -116,7 +114,7 @@ let board_line_of_string s =
 		    if is_valid_letter c || int_of_char c = 32 then
 		      bl.(i) <- c
 		    else
-		      failwith "Unknown character."		      
+		      failwith "Unknown character."
 		   ) s;
       bl
     end
@@ -140,15 +138,15 @@ let open_board file_name =
   |End_of_file -> ()
   |Invalid_argument _ -> failwith "Le plateau contient trop de lignes."
 
-		    
+
 
 let open_game json_file =
   let (ps,b) = parse_main_json (json_from_file json_file) in
   players := Array.make (List.length ps) default_player;
   List.iteri (fun i p -> !players.(i)<-p) ps;
   open_board b
-  
-    
+
+
 
 
 
@@ -160,9 +158,9 @@ let distrib = [('_',2);('A',9);('B',2);('C',2);('D',3);('E',15);('F',2);
 	       ('G',2);('H',2);('I',8);('J',1);('K',1);('L',5);('M',3);
 	       ('N',6);('O',6);('P',2);('Q',1);('R',6);('S',6);('T',6);
 	       ('U',6);('V',2);('W',1);('X',1);('Y',1);('Z',1)]
-		
+
 let bag_list = ref []
-	    
+
 let add_letter c =
   bag_list := !bag_list @ Array.to_list (Array.make (snd c) (fst c))
 
@@ -173,7 +171,7 @@ let new_bag () =
   let tmp = List.map (fun c -> (Random.bits (), c)) !bag_list in
   let sorted = List.sort compare tmp in
   bag_list := List.map snd sorted
-  
+
 
 
 let pick_letters n =
@@ -185,12 +183,12 @@ let pick_letters n =
     _ -> let ret = !bag in
 	 bag := "";
 	 ret
-	 
-  
-				       
 
 
-	     
+
+
+
+
 
 
 
@@ -206,6 +204,3 @@ let json_parsing_test _ =
 
 let tests = ["json parsing" >:: json_parsing_test;
 	    "board line of string" >:: blos_test]
-  
-  
-  
