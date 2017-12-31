@@ -14,13 +14,13 @@ class virtual player (a_name:string) (a_score:int) (a_letters:string) =
     method given_up = give_up
     method pick s =
       if String.length s + String.length letters >
-	   Bag.max_nb_letters then
+	   Rules.max_nb_letters then
 	failwith "A player had more letters than he is allowed."
       else
 	letters <- letters ^ s
 
     method letters_missing  =
-      Bag.max_nb_letters - String.length letters
+      Rules.max_nb_letters - String.length letters
   end
 
 class humanPlayer (a_name:string) (a_score:int) (a_letters:string) =

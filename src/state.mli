@@ -34,6 +34,9 @@
 (**Nouvelle partie*)
 val new_game : string array -> unit
 
+(** Add a word to the board*)
+val add_word : int -> int -> Rules.orientation -> string -> unit
+
 (**Nom de la map*)
 val get_name : unit -> string
 
@@ -48,3 +51,5 @@ val get_turn : unit -> int
 
 (**Tests functions *)
 val tests : OUnit2.test list
+
+			

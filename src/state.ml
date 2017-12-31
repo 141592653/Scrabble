@@ -13,6 +13,13 @@ let get_name () = !name
 let get_players () = !players
 let get_turn () = !turn
 
+
+let add_word l c o w =
+  let o' = Rules.int_of_orientation o in 
+  for i = 0 to String.length w - 1 do
+    board.(l+i*o').(c + i*(1-o')) <- w.[i]
+  done
+
 (* ********************** Json parsing **************************** *)
 let is_valid_letter c =
   c = '_' || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')
@@ -28,7 +35,7 @@ let parse_player p =
          String.iter (fun c -> if is_valid_letter c then ()
                             else failwith "Une lettre d'un jeu d'un joueur \
                                            est mal renseignée") s;
-         if String.length s <= Bag.max_nb_letters then
+         if String.length s <= Rules.max_nb_letters then
            new Player.humanPlayer name score s
          else
            failwith "Un joueur a un jeu de plus de 8 lettres"
@@ -131,7 +138,7 @@ let open_game json_file =
 (* *********************** End parsing ********************************* *)
 
 
-let bag = new Bag.bag Bag.fr_distrib
+let bag = new Rules.bag Rules.fr_distrib
 
 let empty_board () =
   for i = 0 to Array.length board - 1 do
@@ -140,14 +147,13 @@ let empty_board () =
 
 let new_game names =
   turn := 0;
-  new_bag ();
   Random.self_init ();
   let tmp = Array.map (fun c -> (Random.bits (), c)) names in
   let nb_names = Array.length names in
   players := Array.make nb_names default_player;
-  for i = 0 to - 1 do
+  for i = 0 to nb_names - 1 do
     (!players).(i) <- new Player.humanPlayer
-                       names.(i) 0 (bag#pick_letters Bag.max_nb_letters)
+                       names.(i) 0 (bag#pick_letters Rules.max_nb_letters)
   done;
   empty_board ()
 
