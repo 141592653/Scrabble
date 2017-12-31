@@ -5,13 +5,13 @@
 class virtual player : string -> int -> string ->
   object
 
-    (**Nom du joueur *)
+    (**Name of the player *)
     val name : string
 
-    (**Score courant du joueur*)
+    (**Current score*)
     val score : int
 
-    (**Le jeu du joueur*)
+    (**The hand of the player*)
     val letters : string
 
     (**True if the player has given up*)
@@ -31,6 +31,12 @@ class virtual player : string -> int -> string ->
 
     (**Give up getter*)
     method given_up : bool
+
+    (**Picks letters given by the UI*)
+    method pick : string -> unit
+
+    (** Number of letters missing for having enough letters*)
+    method letters_missing : int
 
     (**Is theµ player human*)
     method virtual is_human : bool

@@ -86,8 +86,10 @@ let rec main_loop () =
   let ngu = ref 0 in (* ngu : not given up
                       * (number of players who haven't give up)*)
   let players = State.get_players () in
+
+  (*all players have to play...*)
   for i = 0 to Array.length players - 1 do
-    if not players.(i)#given_up  then
+    if not players.(i)#given_up  then (*unless they've given up*)
       begin
         pp_player players.(i) State.board;
         let move = read_line () in

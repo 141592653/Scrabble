@@ -3,8 +3,6 @@
 open OUnit2
 open Yojson
 
-let max_nb_letters = 7
-
 let name = ref ""
 let players = ref [||]
 let turn = ref 0
@@ -30,7 +28,7 @@ let parse_player p =
          String.iter (fun c -> if is_valid_letter c then ()
                             else failwith "Une lettre d'un jeu d'un joueur \
                                            est mal renseignée") s;
-         if String.length s <= max_nb_letters then
+         if String.length s <= Bag.max_nb_letters then
            new Player.humanPlayer name score s
          else
            failwith "Un joueur a un jeu de plus de 8 lettres"
@@ -178,7 +176,7 @@ let new_game names =
   players := Array.make nb_names default_player;
   for i = 0 to - 1 do
     (!players).(i) <- new Player.humanPlayer
-                       names.(i) 0 (pick_letters max_nb_letters)
+                       names.(i) 0 (pick_letters Bag.max_nb_letters)
   done;
   empty_board ()
 
