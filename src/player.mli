@@ -1,50 +1,46 @@
-(** Ce module contient les classes représentant 
+(** Ce module contient les classes représentant
  *  les joueurs humains ou non humains*)
-
 
 (**Cette classe représente un joueur humain ou non humain*)
 class virtual player : string -> int -> string ->
-       object
-			 
-		     
-	 (**Nom du joueur *)
-	 val name : string
+  object
 
-	 (**Score courant du joueur*)
-	 val score : int
+    (**Nom du joueur *)
+    val name : string
 
-	 (**Le jeu du joueur*)
-	 val letters : string
+    (**Score courant du joueur*)
+    val score : int
 
-	 (**True if the player has given up*)
-	 val give_up : bool
-			   
-	 (**Asks the player to play*)
-	 method virtual play : string -> unit
+    (**Le jeu du joueur*)
+    val letters : string
 
-	 (** Name getter*)
-	 method get_name : string
+    (**True if the player has given up*)
+    val give_up : bool
 
-	 (**Score getter*)
-	 method get_score : int
+    (**Asks the player to play*)
+    method virtual play : string -> unit
 
-	 (**Letters getter*)
-	 method get_letters : string
+    (** Name getter*)
+    method get_name : string
 
-	 (**Give up getter*)
-	 method given_up : bool
+    (**Score getter*)
+    method get_score : int
 
-	 (**Is theµ player human*)
-	 method virtual is_human : bool
+    (**Letters getter*)
+    method get_letters : string
 
+    (**Give up getter*)
+    method given_up : bool
 
+    (**Is theµ player human*)
+    method virtual is_human : bool
 
-       end
+  end
 
 (** This class represents human players *)
 class humanPlayer : string -> int -> string ->
-      object
-	inherit player
-	method play : string -> unit
-	method is_human : bool
-      end
+  object
+    inherit player
+    method play : string -> unit
+    method is_human : bool
+  end

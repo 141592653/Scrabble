@@ -3,7 +3,7 @@ let filename = ref ""
 
 let main_func file =
   Printf.printf "*********************** Bienvenue dans Scrabble x\
-		  **************************** \n";
+                 **************************** \n";
    Printf.printf "Voulez vous créer une nouvelle partie ? \n";
    if Ui.ask_bool () then
      Ui.ask_new_game ()
