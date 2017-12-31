@@ -8,7 +8,8 @@ let main_func file =
    if Ui.ask_bool () then
      Ui.ask_new_game ()
    else
-     Printf.printf "oooh"
+     Printf.printf "oooh";
+   Ui.main_loop ()
 
 let main() =
   Arg.parse
