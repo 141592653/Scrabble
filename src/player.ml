@@ -9,7 +9,8 @@ class virtual player (a_name:string) (a_score:int) (a_letters:string) =
     val mutable letters = a_letters
     val mutable give_up = false
     method virtual play : string -> unit
-    method virtual is_human : bool
+    method virtual ask_action : unit -> Action.action
+    (*method virtual is_human : bool*)
     method get_name = name
     method get_letters = letters
     method get_score = score
@@ -28,7 +29,20 @@ class virtual player (a_name:string) (a_score:int) (a_letters:string) =
 class humanPlayer (a_name:string) (a_score:int) (a_letters:string) =
   object (self)
     inherit player a_name a_score a_letters
-    method is_human = true
+
+		   
+    method ask_action () =
+      Printf.printf "[Entrez une action] ";
+      let oa = Action.parse_action (read_line ()) in
+      match oa with (*option action*)
+      |None -> Misc.not_understood ();
+	       Misc.print_action_doc ();
+	       self#ask_action ()
+      |Some a -> a
+     
+
+	  
+    (*method is_human = true*)
     method play s = print_string s
   end
 

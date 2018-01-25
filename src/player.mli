@@ -20,6 +20,9 @@ class virtual player : string -> int -> string ->
     (**Asks the player to play*)
     method virtual play : string -> unit
 
+    (**How to ask to the player to play*)
+    method virtual ask_action : unit -> Action.action
+
     (** Name getter*)
     method get_name : string
 
@@ -37,10 +40,6 @@ class virtual player : string -> int -> string ->
 
     (** Number of letters missing for having enough letters*)
     method letters_missing : int
-
-    (**Is the player human*)
-    method virtual is_human : bool
-
   end
 
 (** This class represents human players *)
@@ -48,7 +47,7 @@ class humanPlayer : string -> int -> string ->
   object
     inherit player
     method play : string -> unit
-    method is_human : bool
+    method  ask_action : unit -> Action.action
   end
 
 (** Network player *)

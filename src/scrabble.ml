@@ -5,7 +5,7 @@ let main_func file =
   Printf.printf "*********************** Bienvenue dans Scrabble x\
                  **************************** \n";
    Printf.printf "Voulez vous créer une nouvelle partie ? \n";
-   if Ui.ask_bool () then
+   if Misc.ask_bool () then
      Ui.ask_new_game ()
    else
      Printf.printf "oooh";
