@@ -29,7 +29,7 @@ let is_valid_letter c =
 
 (*Récupère le nom, le score et les lettres du joueur p *)
 let parse_player p =
-  let (name,score_letters) = p in
+  let (name, score_letters) = p in
   match score_letters with
   | `Assoc l -> begin
       match l with
@@ -115,7 +115,6 @@ let board_line_of_string s =
   else
     failwith "A line has to many characters."
 
-
 let blos_test _ =
   assert_equal (board_line_of_string "aa B")
     [|'a'; 'a'; ' '; 'B'; ' '; ' '; ' '; ' '; ' '; ' '; ' '; ' '; ' '; ' '; ' '|]
@@ -150,6 +149,7 @@ let empty_board () =
 
 let new_game infos =
   let serv_sock = socket PF_INET SOCK_STREAM 0 in
+  setsockopt serv_sock SO_REUSEADDR true;
   bind serv_sock (ADDR_INET(inet_addr_any, 14159));
   listen serv_sock 1024;
   turn := 0;

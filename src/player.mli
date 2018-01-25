@@ -4,7 +4,6 @@
 (**Cette classe représente un joueur humain ou non humain*)
 class virtual player : string -> int -> string ->
   object
-
     (**Name of the player *)
     val name : string
 
@@ -47,7 +46,7 @@ class humanPlayer : string -> int -> string ->
   object
     inherit player
     method play : string -> unit
-    method  ask_action : unit -> Action.action
+    method ask_action : unit -> Action.action
   end
 
 (** Network player *)
@@ -56,5 +55,5 @@ class networkPlayer : string -> int -> string -> Unix.file_descr ->
     inherit player
     val sock : Unix.file_descr
     method play : string -> unit
-    method is_human : bool
+    method ask_action : unit -> Action.action
   end

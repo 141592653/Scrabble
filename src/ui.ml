@@ -1,5 +1,3 @@
-
-
 (*Pretty printing of a player*)
 let pp_player p b =
   Format.printf "@[<v 0>C'est au tour de %s de jouer.@,\
