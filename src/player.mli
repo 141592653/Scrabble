@@ -52,7 +52,7 @@ class humanPlayer : string -> int -> string ->
   end
 
 (** Network player *)
-class networkPlayer : string -> int -> string ->
+class networkPlayer : string -> int -> string -> Unix.file_descr ->
   object
     inherit player
     val sock : Unix.file_descr

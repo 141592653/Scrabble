@@ -31,10 +31,8 @@
  * - Des espaces (ce sont des cases vides)
  *)
 
+(** Player info: network player * name *)
 type player_info = Info of bool * string
-
-(** The server main socket *)
-val serv_sock : ref Unix.file_descr
 
 (** Nouvelle partie *)
 val new_game : player_info array -> unit

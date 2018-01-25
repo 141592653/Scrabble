@@ -1,7 +1,10 @@
 (** Contient l'état du jeu à un moment donné*)
 
+open Unix
 open OUnit2
 open Yojson
+
+type player_info = Info of bool * string
 
 let name = ref ""
 let players = ref [||]
@@ -146,17 +149,18 @@ let empty_board () =
   done
 
 let new_game infos =
-  serv_sock := socket PF_INET SOCK_STREAM 0;
+  let serv_sock = socket PF_INET SOCK_STREAM 0 in
+  bind serv_sock (ADDR_INET(inet_addr_any, 14159));
   listen serv_sock 1024;
   turn := 0;
   Random.self_init ();
-  let tmp = Array.map (fun c -> (Random.bits (), c)) names in
-  let nb_names = Array.length names in
+  let tmp = Array.map (fun c -> (Random.bits (), c)) infos in
+  let nb_names = Array.length infos in
   players := Array.make nb_names default_player;
   for i = 0 to nb_names - 1 do
-    match info.(i) with
+    match infos.(i) with
     | Info(true, name) -> (* Network  player *)
-       (!players).(i) <- new Player.networkPlayer name 0 (bag#pick_letters Rules.max_nb_letters) (!serv_sock)
+       (!players).(i) <- new Player.networkPlayer name 0 (bag#pick_letters Rules.max_nb_letters) serv_sock
     | Info(false, name) -> (* Local player *)
        (!players).(i) <- new Player.humanPlayer name 0 (bag#pick_letters Rules.max_nb_letters)
   done;

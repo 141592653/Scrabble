@@ -71,16 +71,16 @@ let rec ask_int () =
 let ask_new_player i =
   Printf.printf "Joueur %d en réseau ?\n" i;
   let n = ask_bool () in
-  if n then begin
-    Printf.printf "Joueur local; quel est votre pseudo ?\n" i;
-    Info(n, ask_string ()) end
+  if not n then begin
+    Printf.printf "Joueur local; quel est votre pseudo ?\n";
+    State.Info(n, ask_string ()) end
   else
-    Info(n, "")
+    State.Info(n, "")
 
 let ask_new_game () =
   Printf.printf "Combien y a-t-il de joueurs ? (l'ordre des joueurs ne sera pas l'ordre de jeu)\n";
   let nb_players = ask_int () in
-  let players = Array.make nb_players player_info in
+  let players = Array.make nb_players (State.Info(false, "")) in
   for i = 0 to nb_players - 1 do
     players.(i) <- ask_new_player i
   done;
@@ -169,12 +169,12 @@ and ask_action player =
     end
 
 let rec main_loop () =
-  let ngu = ref 0 in (* ngu : not given up (number of players who haven't give up)*)
+  let ngu = ref 0 in (* ngu : not given up (number of players who haven't give up) *)
   let players = State.get_players () in
 
-  (*all players have to play...*)
+  (* all players have to play... *)
   for i = 0 to Array.length players - 1 do
-    if not players.(i)#given_up  then (*unless they've given up*)
+    if not players.(i)#given_up  then (* unless they've given up *)
       begin
         pp_player players.(i) State.board;
         Printf.printf "\n";
