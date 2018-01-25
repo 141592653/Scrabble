@@ -15,7 +15,7 @@ class virtual player : string -> int -> string ->
     val letters : string
 
     (**True if the player has given up*)
-    val give_up : bool
+    val given_up : bool
 
     (**Asks the player to play*)
     method virtual play : string -> unit
@@ -29,11 +29,18 @@ class virtual player : string -> int -> string ->
     (**Score getter*)
     method get_score : int
 
+    (**Score setter (the number given in argument will be added
+     * to the overall score of the player)*)
+    method add_to_score : int -> unit
+
     (**Letters getter*)
     method get_letters : string
 
     (**Give up getter*)
     method given_up : bool
+
+    (**Use when the player wants to give up*)
+    method give_up : unit -> unit
 
     (**Picks letters given by the UI*)
     method pick : string -> unit

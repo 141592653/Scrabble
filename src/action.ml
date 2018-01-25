@@ -15,6 +15,7 @@ let parse_orientation c =
 
 let parse_word s =
   let line_char = Char.uppercase_ascii s.[0] in
+  (*number of the line*)
   let line = 
     if line_char >= 'A' && line_char <= 'O' then
       int_of_char line_char - int_of_char 'A'
@@ -30,7 +31,8 @@ let parse_word s =
     else
       raise CantParse
   in
-  let col = int_of_string (String.sub s 1 num_length) in
+  (*number of the column*)
+  let col = int_of_string (String.sub s 1 num_length) - 1 in
   (line,col,orient,
    String.sub s (3+num_length) (String.length s - 3 - num_length))
 
@@ -47,9 +49,7 @@ let parse_action s = (*s means string*)
     begin
       try 
 	let (l,c,o,w) = parse_word s in
-	Printf.printf "%d %d %s" l c w;
-	Some (WORD (l,c,o,w))
-	
+	Some (WORD (l,c,o,w))	
       with 
       |_ -> None		   
     end

@@ -56,6 +56,11 @@ let fr_distrib = [('_',2);('A',9);('B',2);('C',2);('D',3);('E',15);('F',2);
                ('N',6);('O',6);('P',2);('Q',1);('R',6);('S',6);('T',6);
                ('U',6);('V',2);('W',1);('X',1);('Y',1);('Z',1)]
 
+(*the number of point for each letter*)
+let fr_points = [|1;3;3;2;1;4;2;4;1;8;10;1;2;1;1;3;8;1;1;1;1;4;10;10;10;10|]
+
+let points = fr_points
+
 
 (*conversion of a distribution to a randomly shuffled string*)
 let string_of_distrib distrib =

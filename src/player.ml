@@ -5,14 +5,16 @@ class virtual player (a_name:string) (a_score:int) (a_letters:string) =
     val name = a_name
     val mutable score = a_score
     val mutable letters = a_letters
-    val mutable give_up = false
+    val mutable given_up = false
     method virtual play : string -> unit
     method virtual ask_action : unit -> Action.action
     (*method virtual is_human : bool*)
     method get_name = name
     method get_letters = letters
     method get_score = score
-    method given_up = give_up
+    method add_to_score n = score <- score + n
+    method given_up = given_up
+    method give_up () = given_up <- true
     method pick s =
       if String.length s + String.length letters >
 	   Rules.max_nb_letters then

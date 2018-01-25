@@ -34,8 +34,13 @@
 (**Nouvelle partie*)
 val new_game : string array -> unit
 
-(** Add a word to the board*)
-val add_word : int -> int -> Rules.orientation -> string -> unit
+
+(**this function returns the letters used from the players game.
+If there are no letters, then the move is not legal.*)
+val is_legal : int -> int -> Rules.orientation -> string -> string
+  
+(** Add a word to the board and returns the number of points made*)
+val add_word : int -> int -> Rules.orientation -> string -> int
 
 (**Nom de la map*)
 val get_name : unit -> string
