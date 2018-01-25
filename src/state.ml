@@ -15,7 +15,7 @@ let get_turn () = !turn
 
 
 let add_word l c o w =
-  let o' = Rules.int_of_orientation o in 
+  let o' = Rules.int_of_orientation o in
   for i = 0 to String.length w - 1 do
     board.(l+i*o').(c + i*(1-o')) <- w.[i]
   done
@@ -145,15 +145,20 @@ let empty_board () =
     board.(i) <- Array.make 15 ' '
   done
 
-let new_game names =
+let new_game infos =
+  serv_sock := socket PF_INET SOCK_STREAM 0;
+  listen serv_sock 1024;
   turn := 0;
   Random.self_init ();
   let tmp = Array.map (fun c -> (Random.bits (), c)) names in
   let nb_names = Array.length names in
   players := Array.make nb_names default_player;
   for i = 0 to nb_names - 1 do
-    (!players).(i) <- new Player.humanPlayer
-                       names.(i) 0 (bag#pick_letters Rules.max_nb_letters)
+    match info.(i) with
+    | Info(true, name) -> (* Network  player *)
+       (!players).(i) <- new Player.networkPlayer name 0 (bag#pick_letters Rules.max_nb_letters) (!serv_sock)
+    | Info(false, name) -> (* Local player *)
+       (!players).(i) <- new Player.humanPlayer name 0 (bag#pick_letters Rules.max_nb_letters)
   done;
   empty_board ()
 

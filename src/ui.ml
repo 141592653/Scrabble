@@ -49,7 +49,7 @@ let not_understood () =
   Printf.printf "Je n'ai pas compris ce que vous venez de taper.\n"
 
 let rec ask_bool ()  =
-  Printf.printf "[O/o pour Oui, N/n pour Non] ";
+  Printf.printf "[O/N]: ";
   match String.uppercase_ascii (read_line ()) with
   |"O" -> true
   |"N" -> false
@@ -57,11 +57,11 @@ let rec ask_bool ()  =
        ask_bool ()
 
 let  ask_string () =
-  Printf.printf "[Entrez un mot] ";
-  read_line () 
+  Printf.printf "[Entrez un mot]: ";
+  read_line ()
 
 let rec ask_int () =
-  Printf.printf "[Entrez un nombre] ";
+  Printf.printf "[Entrez un nombre]: ";
   try
     int_of_string (read_line ())
   with
@@ -69,40 +69,45 @@ let rec ask_int () =
         ask_int ()
 
 let ask_new_player i =
-  Printf.printf "Joueur %d, quel est votre pseudo ?\n" i;
-  ask_string ()
+  Printf.printf "Joueur %d en réseau ?\n" i;
+  let n = ask_bool () in
+  if n then begin
+    Printf.printf "Joueur local; quel est votre pseudo ?\n" i;
+    Info(n, ask_string ()) end
+  else
+    Info(n, "")
 
 let ask_new_game () =
-  Printf.printf "Combien y a-t-il de joueur ? \
-                 (l'ordre des joueurs ne sera pas l'ordre de jeu)) \n";
+  Printf.printf "Combien y a-t-il de joueurs ? (l'ordre des joueurs ne sera pas l'ordre de jeu)\n";
   let nb_players = ask_int () in
-  let player_names = Array.make nb_players "" in
+  let players = Array.make nb_players player_info in
   for i = 0 to nb_players - 1 do
-    player_names.(i) <- ask_new_player i
+    players.(i) <- ask_new_player i
   done;
-  State.new_game player_names
+  State.new_game players
 
 
 (*************** Parsing of actions ***************************)
 let print_action_doc () =
   Printf.printf "Vous pouvez entrer deux types d'action : \n";
-  Printf.printf " - pour jouer un mot :\n\
-		     * ligne de la première lettre du mot (une lettre) \n\
-		     * colonne de la première lettre du mot (un nombre) \n\
-		     * vertical ou horizontal (V/H) \n\
-		     * insérer un espace \n\
-		     * entrez le mot en utilisant des lettres\
-		 majuscules pour les lettres standard et des \
-		 lettres minuscules pour les Jokers.\n\n\
-		 \
-		 Exemple : E10V BONjOUR\n\n\
-		 \
-		 - pour entrer une action spéciale :\n\
-		     * entrez # puis le nom de l'action spéciale \
-		 sans ajouter d'espace.\
-		     * voici les noms d'actions spéciales acceptés : \n\
-		 aide, piocher\n\n"
-		
+  Printf.printf
+    "- pour jouer un mot :\n\
+     * ligne de la première lettre du mot (une lettre) \n\
+     * colonne de la première lettre du mot (un nombre) \n\
+     * vertical ou horizontal (V/H) \n\
+     * insérer un espace \n\
+     * entrez le mot en utilisant des lettres\
+     majuscules pour les lettres standard et des \
+     lettres minuscules pour les Jokers.\n\n\
+     \
+     Exemple : E10V BONjOUR\n\n\
+     \
+     - pour entrer une action spéciale :\n\
+     * entrez # puis le nom de l'action spéciale \
+     sans ajouter d'espace.\
+     * voici les noms d'actions spéciales acceptés : \n\
+     aide, piocher\n\n"
+
 type word_pos = int*int*string
 exception CantParse
 
@@ -111,17 +116,17 @@ let parse_orientation c =
   |'v'|'V' -> Rules.V
   |'h'|'H' -> Rules.H
   |_ -> raise CantParse
-	    
+
 let parse_word s =
   let line_char = Char.uppercase_ascii s.[0] in
-  let line = 
+  let line =
     if line_char >= 'A' && line_char <= 'O' then
       int_of_char line_char - int_of_char 'A'
     else
       raise CantParse
   in
   (*the number can be up to 15 so 1 or 2 characters*)
-  let (num_length,orient) = 
+  let (num_length,orient) =
     if s.[3] = ' ' then
       (1,parse_orientation s.[2])
     else if s.[4] = ' ' then
@@ -131,48 +136,40 @@ let parse_word s =
   in
   let col = int_of_string (String.sub s 1 num_length) in
   (line,col,orient,
-   String.sub s (3+num_length) (String.length s - 3 - num_length))
+   String.sub s (3 + num_length) (String.length s - 3 - num_length))
 
 
-
-    
-    
 let rec ask_again player  =
   not_understood ();
   print_action_doc ();
   ask_action player
 
 and ask_action player =
-  
   Printf.printf "[Entrez une action] ";
   let s = read_line () in
   if String.length s = 0 then
     begin
-    ask_again player
+      ask_again player
     end;
-		    
+
   if s.[0] = '#' then
     match String.sub s 1 (String.length s - 1 ) with
     |"aide" -> print_action_doc ();
-	       ask_action player
+              ask_action player
     |"piocher" -> ()
     |_ -> ask_again player
   else
     begin
-    try 
+    try
       let (l,c,o,w) = parse_word s in
       State.add_word l c o w;
       Printf.printf "%d %d %s" l c w
-    with 
-    |_ -> ask_again player		   
+    with
+    |_ -> ask_again player
     end
-		 
 
-
-		 
 let rec main_loop () =
-  let ngu = ref 0 in (* ngu : not given up
-                      * (number of players who haven't give up)*)
+  let ngu = ref 0 in (* ngu : not given up (number of players who haven't give up)*)
   let players = State.get_players () in
 
   (*all players have to play...*)
@@ -180,7 +177,7 @@ let rec main_loop () =
     if not players.(i)#given_up  then (*unless they've given up*)
       begin
         pp_player players.(i) State.board;
-	Printf.printf "\n";
+        Printf.printf "\n";
         ask_action players.(i)
       end
   done;

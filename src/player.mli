@@ -38,7 +38,7 @@ class virtual player : string -> int -> string ->
     (** Number of letters missing for having enough letters*)
     method letters_missing : int
 
-    (**Is theµ player human*)
+    (**Is the player human*)
     method virtual is_human : bool
 
   end
@@ -47,6 +47,15 @@ class virtual player : string -> int -> string ->
 class humanPlayer : string -> int -> string ->
   object
     inherit player
+    method play : string -> unit
+    method is_human : bool
+  end
+
+(** Network player *)
+class networkPlayer : string -> int -> string ->
+  object
+    inherit player
+    val sock : Unix.file_descr
     method play : string -> unit
     method is_human : bool
   end
