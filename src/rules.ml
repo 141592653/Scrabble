@@ -1,4 +1,7 @@
 type orientation = H|V
+		       
+
+    
 let int_of_orientation o = match o with
   |H -> 0
   |V -> 1
@@ -31,6 +34,9 @@ let string_of_distrib distrib =
    (*let's transform it into a string*)
    bag_list := List.map snd sorted;
    String.concat "" (List.map Char.escaped !bag_list)
+
+
+
 		 
 		 
 class bag (distrib : letter_distrib) = 
