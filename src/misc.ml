@@ -1,13 +1,36 @@
 (*converts spaces into .*)
-let convert_blanks c =
-  if c = ' ' then
-    '.'
-  else
-    c
+let pp_char_on_board f c i j =
+  match Rules.score_modifiers.(i).(j) with
+  |Rules.NONE -> if c = ' ' then
+	     Format.fprintf f "."
+	   else
+	     Format.fprintf f "%c" c
+  |Rules.MUL_LETTER i ->
+    if i <= 2 && c = ' 'then
+      Format.fprintf f "\027[104m"
+    else if c= ' ' then
+      Format.fprintf f "\027[44m";
+    if c = ' ' then
+      Format.fprintf f "%d" i
+    else
+      Format.fprintf f "%c" c;
+    Format.fprintf f "\027[0m";
+  |Rules.MUL_WORD i ->
+    if i <= 2 && c = ' 'then
+      Format.fprintf f "\027[45m"
+    else if c = ' ' then
+      Format.fprintf f "\027[41m";
+    if c = ' ' then
+      Format.fprintf f "%d" i
+    else
+      Format.fprintf f "%c" c;
+    Format.fprintf f "\027[0m"
+				    
+	       
 
 (*prints 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5*)
 let line_of_numbers f g =
-  Format.fprintf f " ";
+  Format.fprintf f "  ";
   for i = 1 to min 9 (Array.length g.(0)) do
     Format.fprintf f "%d " i
   done;
@@ -37,10 +60,11 @@ let pp_board f g =
 	let line_letter = char_of_int (i + int_of_char 'A') in 
         Format.fprintf f "%c|" line_letter;
         for j = 0 to Array.length g.(i)-2 do
-          Format.fprintf f "%c " (convert_blanks g.(i).(j))
+	  pp_char_on_board f g.(i).(j) i j;
+          Format.fprintf f " " 
         done;
-        Format.fprintf f "%c"
-          (convert_blanks g.(i).(Array.length g.(i)-1));
+	let last_column = Array.length g.(i)-1 in
+	pp_char_on_board f g.(i).(last_column) i last_column;
         Format.fprintf f "|%c@," line_letter
       done;
 
