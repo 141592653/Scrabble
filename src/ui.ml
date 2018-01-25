@@ -5,7 +5,7 @@ let pp_player p b =
   Format.printf "@[<v 0>C'est au tour de %s de jouer.@,\
                  Votre jeu est : %s@,\
                  Votre score est : %d@,\
-                 Voici l'état du jeu : @,"
+                 Voici l'état du jeu : @,@,"
     p#get_name p#get_letters p#get_score;
   Misc.pp_board Format.std_formatter b;
   Format.printf "@]"
@@ -41,7 +41,7 @@ let rec main_loop () =
     if not players.(i)#given_up  then (*unless they've given up*)
       begin
         pp_player players.(i) State.board;
-	Printf.printf "\n";
+	Printf.printf "\n\n";
         ignore (players.(i)#ask_action ())
       end
   done;

@@ -2,7 +2,7 @@ let time_limit = ref 100
 let filename = ref ""
 
 let main_func file =
-  Printf.printf "*********************** Bienvenue dans Scrabble x\
+  Printf.printf "*********************** Bienvenue dans Scrabble \
                  **************************** \n";
    Printf.printf "Voulez vous créer une nouvelle partie ? \n";
    if Misc.ask_bool () then

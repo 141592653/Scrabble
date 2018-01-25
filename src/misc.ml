@@ -5,37 +5,55 @@ let convert_blanks c =
   else
     c
 
-(*Pretty printing of a board*)
+(*prints 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5*)
+let line_of_numbers f g =
+  Format.fprintf f " ";
+  for i = 1 to min 9 (Array.length g.(0)) do
+    Format.fprintf f "%d " i
+  done;
+  
+  for i = 10 to Array.length g.(0) do
+    Format.fprintf f "%d " (i-10)
+  done;
+  Format.fprintf f "@,"
+  
+
+(*Pretty printing of a board , f is the formatter, g the grid*)
 let pp_board f g =
   if not (Array.length g = 0) then
     begin
       Format.fprintf f "@[<v 2>  ";
+      line_of_numbers f g;
 
       (*top line*)
+      Format.fprintf f " ";
       for _ = 1 to 2*Array.length g.(0) + 1 do
-        Format.fprintf f "_";
+	Format.fprintf f "_";
       done;
       Format.fprintf f "@,";
-
+  
       (*body*)
       for i = 0 to Array.length g - 1 do
-        Format.fprintf f "|";
+	let line_letter = char_of_int (i + int_of_char 'A') in 
+        Format.fprintf f "%c|" line_letter;
         for j = 0 to Array.length g.(i)-2 do
           Format.fprintf f "%c " (convert_blanks g.(i).(j))
         done;
         Format.fprintf f "%c"
           (convert_blanks g.(i).(Array.length g.(i)-1));
-        Format.fprintf f "|@,"
+        Format.fprintf f "|%c@," line_letter
       done;
 
       (*bottom line*)
+      Format.fprintf f " ";
       for _ = 1 to 2*Array.length g.(0) + 1 do
         Format.fprintf f "‾";
       done;
+      Format.fprintf f "@,";
+      line_of_numbers f g;
 
       Format.fprintf f "@]"
     end
-
 
 
 let not_understood () =
