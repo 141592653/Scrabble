@@ -1,12 +1,12 @@
 (*Pretty printing of a player*)
-let pp_player p b =
-  Format.printf "@[<v 0>C'est au tour de %s de jouer.@,\
-                 Votre jeu est : %s@,\
-                 Votre score est : %d@,\
-                 Voici l'état du jeu : @,@,"
+let pp_player f p b =
+  Format.fprintf f "@[<v 0>C'est au tour de %s de jouer.@,\
+                    Votre jeu est : %s@,\
+                    Votre score est : %d@,\
+                    Voici l'état du jeu : @,@,"
     p#get_name p#get_letters p#get_score;
-  Misc.pp_board Format.std_formatter b;
-  Format.printf "@,@,@]"
+  Misc.pp_board f b;
+  Format.fprintf f "@,@,@]"
 
 let ask_new_player i =
   Printf.printf "Joueur %d en réseau ?\n" i;
@@ -38,22 +38,22 @@ let rec main_loop () =
 
   (* all players have to play... *)
   for i = 0 to Array.length players - 1 do
-    if not players.(i)#given_up  then (* unless they've given up *)
+    if not players.(i)#given_up then (* unless they've given up *)
       begin
         game_finished := false;
 
-        pp_player players.(i) State.board;
-        Printf.printf "\n\n";
+        pp_player Format.str_formatter players.(i) State.board;
+        players.(i)#send_game (Format.flush_str_formatter ());
 
         let a = ref (players.(i)#ask_action ()) in
-        while not (is_final_action !a) do
-          match !a with
+        while not (is_final_action !a) do match !a with
           |Action.HELP ->  Misc.print_action_doc ()
-          |Action.WORD(_) -> Printf.printf
-                              "Le mot que vous avez joué ne rentre pas\
-                               sur la grille, ou bien rentre en collision\
-                               avec un mot déjà posé.";
-                            a :=  players.(i)#ask_action ()
+          |Action.WORD(_) ->
+            Printf.printf
+              "Le mot que vous avez joué ne rentre pas sur la grille, \
+               ou bien rentre en collision avec un mot déjà posé.";
+            a :=  players.(i)#ask_action ()
+          | _ -> ()
         done;
 
         match !a with
@@ -61,7 +61,10 @@ let rec main_loop () =
         |Action.WORD(l,c,o,w) ->
           let score = State.add_word l c o w in
           players.(i)#add_to_score score
+        | _ -> ()
       end
   done;
   if not !game_finished then
     main_loop()
+
+let rec main_loop_network () = ()

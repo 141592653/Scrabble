@@ -1,16 +1,16 @@
 open Bytes
 open Unix
-open OUnit2
 
 class virtual player (a_name:string) (a_score:int) (a_letters:string) =
-  object (self)
+  object
     val name = a_name
     val mutable score = a_score
     val mutable letters = a_letters
     val mutable given_up = false
     method virtual play : string -> unit
     method virtual ask_action : unit -> Action.action
-    (*method virtual is_human : bool*)
+    method virtual network_player : bool
+    method virtual send_game : string -> unit
     method get_name = name
     method get_letters = letters
     method get_score = score
@@ -23,9 +23,7 @@ class virtual player (a_name:string) (a_score:int) (a_letters:string) =
         failwith "A player had more letters than he is allowed."
       else
         letters <- letters ^ s
-
-    method letters_missing  =
-      Rules.max_nb_letters - String.length letters
+    method letters_missing  = Rules.max_nb_letters - String.length letters
   end
 
 class humanPlayer (a_name:string) (a_score:int) (a_letters:string) =
@@ -42,24 +40,32 @@ class humanPlayer (a_name:string) (a_score:int) (a_letters:string) =
       |Some a -> a
 
     method play s = print_string s
+    method send_game str = Format.fprintf Format.std_formatter "%s\n\n" str
+    method network_player = false
   end
 
 class networkPlayer (a_name:string) (a_score:int) (a_letters:string) (serv_sock:file_descr) =
   let () = Printf.printf "En attente de connexion d'un joueur...\n%!" in
-  let (s, addr) = accept serv_sock in
+  let (s, address) = accept serv_sock in
+  let _ = match address with
+    | ADDR_INET(addr, port) ->
+       Printf.printf "Joueur connecté depuis %s sur le port %d\n%!" (string_of_inet_addr addr) port
+    | _ -> ()
+  in
   let name_bytes = create 50 in
   let name_len = recv s name_bytes 0 50 [] in
   let name = sub_string name_bytes 0 name_len in
-  object (self)
+  object
     inherit player name a_score a_letters
     val mutable sock = s
     method play str = print_string str
+
     method ask_action () =
       let your_turn_msg = "play" in
       let rc = send_substring sock your_turn_msg 0 (String.length your_turn_msg) [] in
       if rc <= 0 then begin
-          Printf.printf "Joueur %s s'est déconnecté" name;
-          give_up <- true;
+          Printf.printf "Le joueur %s s'est déconnecté\n%!" name;
+          given_up <- true;
           Action.GIVE_UP
         end
       else begin
@@ -69,5 +75,11 @@ class networkPlayer (a_name:string) (a_score:int) (a_letters:string) (serv_sock:
           match Action.parse_action (sub_string play_bytes 0 size) with
           |Some a -> a
           |_ -> failwith "Client send wrong playing data"
-      end
+        end
+
+    method send_game str =
+      let rc = send_substring sock str 0 (String.length str) [] in
+      if rc != (String.length str) then failwith "Failed to send data to player"
+
+    method network_player = true
   end

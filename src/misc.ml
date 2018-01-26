@@ -1,14 +1,15 @@
 (*converts spaces into .*)
 let pp_char_on_board f c i j =
   match Rules.score_modifiers.(i).(j) with
-  |Rules.NONE -> if c = ' ' then
-	     Format.fprintf f "."
-	   else
-	     Format.fprintf f "%c" c
+  |Rules.NONE ->
+    if c = ' ' then
+      Format.fprintf f "."
+    else
+      Format.fprintf f "%c" c
   |Rules.MUL_LETTER i ->
     if i <= 2 && c = ' 'then
       Format.fprintf f "\027[104m"
-    else if c= ' ' then
+    else if c = ' ' then
       Format.fprintf f "\027[44m";
     if c = ' ' then
       Format.fprintf f "%d" i
@@ -25,8 +26,6 @@ let pp_char_on_board f c i j =
     else
       Format.fprintf f "%c" c;
     Format.fprintf f "\027[0m"
-				    
-	       
 
 (*prints 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5*)
 let line_of_numbers f g =
@@ -34,12 +33,11 @@ let line_of_numbers f g =
   for i = 1 to min 9 (Array.length g.(0)) do
     Format.fprintf f "%d " i
   done;
-  
+
   for i = 10 to Array.length g.(0) do
     Format.fprintf f "%d " (i-10)
   done;
   Format.fprintf f "@,"
-  
 
 (*Pretty printing of a board , f is the formatter, g the grid*)
 let pp_board f g =
@@ -51,20 +49,20 @@ let pp_board f g =
       (*top line*)
       Format.fprintf f " ";
       for _ = 1 to 2*Array.length g.(0) + 1 do
-	Format.fprintf f "_";
+        Format.fprintf f "_";
       done;
       Format.fprintf f "@,";
-  
+
       (*body*)
       for i = 0 to Array.length g - 1 do
-	let line_letter = char_of_int (i + int_of_char 'A') in 
+        let line_letter = char_of_int (i + int_of_char 'A') in
         Format.fprintf f "%c|" line_letter;
         for j = 0 to Array.length g.(i)-2 do
-	  pp_char_on_board f g.(i).(j) i j;
-          Format.fprintf f " " 
+          pp_char_on_board f g.(i).(j) i j;
+          Format.fprintf f " "
         done;
-	let last_column = Array.length g.(i)-1 in
-	pp_char_on_board f g.(i).(last_column) i last_column;
+        let last_column = Array.length g.(i)-1 in
+        pp_char_on_board f g.(i).(last_column) i last_column;
         Format.fprintf f "|%c@," line_letter
       done;
 
@@ -79,7 +77,6 @@ let pp_board f g =
       Format.fprintf f "@]"
     end
 
-
 let not_understood () =
   Printf.printf "Je n'ai pas compris ce que vous venez de taper.\n"
 
@@ -93,7 +90,7 @@ let rec ask_bool ()  =
 
 let  ask_string () =
   Printf.printf "[Entrez un mot] ";
-  read_line () 
+  read_line ()
 
 let rec ask_int () =
   Printf.printf "[Entrez un nombre] ";
