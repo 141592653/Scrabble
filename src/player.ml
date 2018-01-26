@@ -1,4 +1,4 @@
-open *Bytes
+open Bytes
 open Unix
 open OUnit2
 
