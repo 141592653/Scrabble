@@ -83,7 +83,7 @@ class networkPlayer (a_name:string) (a_score:int) (a_letters:string) (serv_sock:
       let rc = send_substring sock your_turn_msg 0 (String.length your_turn_msg) [] in
       if rc <= 0 then begin
           Printf.printf "Joueur %s s'est déconnecté" name;
-          give_up <- true;
+          given_up <- true;
           Action.GIVE_UP
         end
       else begin
