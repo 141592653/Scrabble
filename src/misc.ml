@@ -77,45 +77,50 @@ let pp_board f g =
       Format.fprintf f "@]"
     end
 
-let not_understood () =
-  Printf.printf "Je n'ai pas compris ce que vous venez de taper.\n"
+let not_understood f =
+  Format.fprintf f "Je n'ai pas compris ce que vous venez de taper.\n"
 
-let rec ask_bool ()  =
+let rec ask_bool f  =
   Printf.printf "[O/o pour Oui, N/n pour Non] ";
   match String.uppercase_ascii (read_line ()) with
   |"O" -> true
   |"N" -> false
-  |_ -> not_understood ();
-       ask_bool ()
+  |_ -> not_understood f;
+       ask_bool f
 
-let  ask_string () =
+let  ask_string f =
   Printf.printf "[Entrez un mot] ";
   read_line ()
 
-let rec ask_int () =
+let rec ask_int f =
   Printf.printf "[Entrez un nombre] ";
   try
     int_of_string (read_line ())
   with
-    _ -> not_understood ();
-         ask_int ()
+    _ -> not_understood f;
+         ask_int f
 
+let print_action_doc f =
+  Format.fprintf f "Vous pouvez entrer deux types d'action : \n";
+  Format.fprintf f
+    " - pour jouer un mot :\n\
+     * ligne de la première lettre du mot (une lettre) \n\
+     * colonne de la première lettre du mot (un nombre) \n\
+     * vertical ou horizontal (V/H) \n\
+     * insérer un espace \n\
+     * entrez le mot en utilisant des lettres\
+     majuscules pour les lettres standard et des \
+     lettres minuscules pour les Jokers.\n\n\
+     \
+     Exemple : E10V BONjOUR\n\n\
+     \
+     - pour entrer une action spéciale :\n\
+     * entrez # puis le nom de l'action spéciale \
+     sans ajouter d'espace.\
+     * voici les noms d'actions spéciales acceptés : \n\
+     aide, piocher\n\n"
 
-let print_action_doc () =
-  Printf.printf "Vous pouvez entrer deux types d'action : \n";
-  Printf.printf " - pour jouer un mot :\n\
-		     * ligne de la première lettre du mot (une lettre) \n\
-		     * colonne de la première lettre du mot (un nombre) \n\
-		     * vertical ou horizontal (V/H) \n\
-		     * insérer un espace \n\
-		     * entrez le mot en utilisant des lettres\
-		 majuscules pour les lettres standard et des \
-		 lettres minuscules pour les Jokers.\n\n\
-		 \
-		 Exemple : E10V BONjOUR\n\n\
-		 \
-		 - pour entrer une action spéciale :\n\
-		     * entrez # puis le nom de l'action spéciale \
-		 sans ajouter d'espace.\
-		     * voici les noms d'actions spéciales acceptés : \n\
-		 aide, piocher\n\n"
+let contains s1 s2 =
+  let re = Str.regexp_string s2 in
+  try ignore (Str.search_forward re s1 0); true
+  with Not_found -> false

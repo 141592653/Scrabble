@@ -34,8 +34,8 @@ class humanPlayer (a_name:string) (a_score:int) (a_letters:string) =
       Printf.printf "[Entrez une action] ";
       let oa = Action.parse_action (read_line ()) in
       match oa with (*option action*)
-      |None -> Misc.not_understood ();
-              Misc.print_action_doc ();
+      |None -> Misc.not_understood Format.std_formatter;
+              Misc.print_action_doc Format.std_formatter;
               self#ask_action ()
       |Some a -> a
 
@@ -55,13 +55,13 @@ class networkPlayer (a_name:string) (a_score:int) (a_letters:string) (serv_sock:
   let name_bytes = create 50 in
   let name_len = recv s name_bytes 0 50 [] in
   let name = sub_string name_bytes 0 name_len in
-  object
+  object (self)
     inherit player name a_score a_letters
     val mutable sock = s
     method play str = print_string str
 
     method ask_action () =
-      let your_turn_msg = "play" in
+      let your_turn_msg = "\nà vous de jouer !\n" in
       let rc = send_substring sock your_turn_msg 0 (String.length your_turn_msg) [] in
       if rc <= 0 then begin
           Printf.printf "Le joueur %s s'est déconnecté\n%!" name;
@@ -72,14 +72,22 @@ class networkPlayer (a_name:string) (a_score:int) (a_letters:string) (serv_sock:
           Printf.printf "En attente du joueur %s...\n%!" name;
           let play_bytes = create 100 in
           let size = recv sock play_bytes 0 100 [] in
-          match Action.parse_action (sub_string play_bytes 0 size) with
-          |Some a -> a
-          |_ -> failwith "Client send wrong playing data"
+
+          let action = Action.parse_action (sub_string play_bytes 0 size) in
+          match action with
+          |None -> Misc.not_understood Format.str_formatter;
+                  Misc.print_action_doc Format.str_formatter;
+                  let str = Format.flush_str_formatter () in
+                  let _ = send_substring sock str 0 (String.length str) [] in
+                  self#ask_action ()
+          |Some action -> action
+
         end
 
     method send_game str =
       let rc = send_substring sock str 0 (String.length str) [] in
-      if rc != (String.length str) then failwith "Failed to send data to player"
+      if rc != (String.length str) then failwith "Failed to send data to player";
+      Unix.sleepf 0.5
 
     method network_player = true
   end

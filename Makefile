@@ -1,4 +1,4 @@
-PACKAGES=-package oUnit -package yojson
+PACKAGES=-package oUnit -package yojson -package str
 BUILD=ocamlbuild -use-ocamlfind \
 	-cflags "-g -w +A"\
 	$(PACKAGES)

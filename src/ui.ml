@@ -10,7 +10,7 @@ let pp_player f p b =
 
 let ask_new_player i =
   Printf.printf "Joueur %d en réseau ?\n" i;
-  let n = Misc.ask_bool () in
+  let n = Misc.ask_bool Format.std_formatter in
   if not n then begin
       Printf.printf "Joueur local; quel est votre pseudo ?\n";
       State.Info(n, Misc.ask_string ()) end
@@ -19,7 +19,7 @@ let ask_new_player i =
 
 let ask_new_game () =
   Printf.printf "Combien y a-t-il de joueurs ? (l'ordre des joueurs ne sera pas l'ordre de jeu)\n";
-  let nb_players = Misc.ask_int () in
+  let nb_players = Misc.ask_int Format.std_formatter in
   let player_infos = Array.make nb_players (State.Info(false, "")) in
   for i = 0 to nb_players - 1 do
     player_infos.(i) <- ask_new_player i
@@ -47,7 +47,7 @@ let rec main_loop () =
 
         let a = ref (players.(i)#ask_action ()) in
         while not (is_final_action !a) do match !a with
-          |Action.HELP ->  Misc.print_action_doc ()
+          |Action.HELP ->  Misc.print_action_doc Format.std_formatter
           |Action.WORD(_) ->
             Printf.printf
               "Le mot que vous avez joué ne rentre pas sur la grille, \
@@ -67,4 +67,36 @@ let rec main_loop () =
   if not !game_finished then
     main_loop()
 
-let rec main_loop_network () = ()
+open Unix
+
+let rec main_loop_network () =
+  (* Setup client socket *)
+  let sock = socket PF_INET SOCK_STREAM 0 in
+  Printf.printf "Entrez l'addresse du serveur: \n";
+  let addr_str = Misc.ask_string () in
+  let s_addr = List.hd (getaddrinfo addr_str "" [AI_FAMILY(PF_INET)]) in
+  (match s_addr.ai_addr with
+   | ADDR_INET(addr, _) -> connect sock (ADDR_INET(addr, Rules.server_port))
+   | _ ->  failwith "Failed to connect to server");
+  (* Connected *)
+  Printf.printf "Connecté au serveur !\nEntrez votre pseudo:\n%!";
+  let name = Misc.ask_string () in
+  let rc = send_substring sock name 0 (min 50 (String.length name)) [] in
+  if rc <= 0 then failwith "Failed to send name to server!";
+
+  let buffer = Bytes.create 4096 in
+  let rec loop () =
+    let n = recv sock buffer 0 4096 [] in
+    let str = Bytes.sub_string buffer 0 n in
+
+    if Misc.contains str "\nà vous de jouer !\n" then begin
+        Printf.printf "[Entrez une action] ";
+        let rec aux () =
+          let answer = read_line () in if (String.length answer) = 0 then aux () else answer
+        in let answer = aux () in
+        let _ = send_substring sock answer 0 (String.length answer) [] in ()
+      end;
+    Printf.printf "%s\n%!" str;
+    loop ()
+
+  in loop ()

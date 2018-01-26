@@ -204,7 +204,7 @@ let empty_board () =
   done
 
 let new_game infos =
-  (** Don't initialize network if all players are local *)
+  (* Don't initialize network if all players are locals *)
   let network = not (Array.for_all (fun a -> match a with | Info(b, _) -> not b) infos) in
   let serv_sock = if network then socket PF_INET SOCK_STREAM 0 else stderr in
   if network then begin
