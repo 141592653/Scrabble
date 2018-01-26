@@ -1,4 +1,3 @@
-
 (**Asks for settings for the new game*)
 val ask_new_game : unit -> unit
 

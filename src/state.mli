@@ -31,30 +31,31 @@
  * - Des espaces (ce sont des cases vides)
  *)
 
-(**Nouvelle partie*)
-val new_game : string array -> unit
+(** Player info: network player * name *)
+type player_info = Info of bool * string
+
+(** Nouvelle partie *)
+val new_game : player_info array -> unit
 
 
 (**this function returns the letters used from the players game.
 If there are no letters, then the move is not legal.*)
 val is_legal : int -> int -> Rules.orientation -> string -> string
-  
+
 (** Add a word to the board and returns the number of points made*)
 val add_word : int -> int -> Rules.orientation -> string -> int
 
-(**Nom de la map*)
+(** Nom de la map *)
 val get_name : unit -> string
 
-(**Tableau représentant le plateau*)
+(** Tableau représentant le plateau *)
 val board : char array array
 
-(**Tableau contenant l'ensemble des joueurs*)
+(** Tableau contenant l'ensemble des joueurs *)
 val get_players : unit -> Player.player array
 
-(**Numéro du joueur dont c'est le tour*)
+(** Numéro du joueur dont c'est le tour *)
 val get_turn : unit -> int
 
-(**Tests functions *)
+(** Tests functions *)
 val tests : OUnit2.test list
-
-			
