@@ -122,3 +122,11 @@ let print_action_doc () =
 		 sans ajouter d'espace.\
 		     * voici les noms d'actions spéciales acceptés : \n\
 		 aide, piocher\n\n"
+
+
+let string_to_list s =
+  let l = ref [] in 
+  for i =  String.length s - 1 downto 0 do
+    l := s.[i] :: !l
+  done;
+  !l
