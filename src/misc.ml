@@ -124,9 +124,4 @@ let print_action_doc () =
 		 aide, piocher\n\n"
 
 
-let string_to_list s =
-  let l = ref [] in 
-  for i =  String.length s - 1 downto 0 do
-    l := s.[i] :: !l
-  done;
-  !l
+
