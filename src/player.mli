@@ -48,6 +48,10 @@ class virtual player : string -> int -> string ->
     (** Number of letters missing for having enough letters*)
     method letters_missing : int
 
+    (** State whether the set of letters of the argument is included
+      * in the set of letters of the player*)
+    method can_play : string -> bool
+
     (**Is the player human*)
 			       (*method virtual is_human : bool*)
 

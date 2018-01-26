@@ -30,10 +30,6 @@ let ask_new_game () =
 		 
 
 
-let is_final_action a= match a with
-  |Action.HELP -> false
-  |Action.WORD(l,c,o,w) -> State.is_legal l c o w <>""
-  |_ -> true
 	     
 let rec main_loop () =
   let game_finished = ref true in
@@ -49,13 +45,30 @@ let rec main_loop () =
 	Printf.printf "\n\n";
 	
 	let a = ref (players.(i)#ask_action ()) in
-	while not (is_final_action !a) do
-	  match !a with
-	  |Action.HELP ->  Misc.print_action_doc ()
-	  |Action.WORD(_) -> Printf.printf
-			       "Le mot que vous avez joué ne rentre pas\ 
-				sur la grille, ou bien rentre en collision\
-				avec un mot déjà posé.";
+	while (match !a with
+	       |Action.HELP -> Misc.print_action_doc ();true
+	       |Action.WORD(l,c,o,w) ->
+		 let letters_played =  State.is_legal l c o w in 
+		 if letters_played = "" then
+		   begin
+		     Printf.printf
+		       "Le mot que vous avez joué ne respecte pas les \
+			règles du jeu.\n";
+		     true		     
+		   end
+		 else if not (players.(i)#can_play letters_played) then
+		   begin
+		     Printf.printf
+		       "Vous avez joué des lettres qui ne sont pas dans \
+			votre jeu\n";
+		     true		     
+		   end
+		 else
+		   false
+		 
+	       |_ -> false)
+
+	do
 	  a :=  players.(i)#ask_action ()
 	done;
 	
