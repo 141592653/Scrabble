@@ -23,4 +23,3 @@ clean:
 
 mrproper: clean
 	rm -rf test.native scrabble.native
-

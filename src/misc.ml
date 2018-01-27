@@ -124,3 +124,10 @@ let contains s1 s2 =
   let re = Str.regexp_string s2 in
   try ignore (Str.search_forward re s1 0); true
   with Not_found -> false
+
+let string_to_list s =
+  let l = ref [] in
+  for i =  String.length s - 1 downto 0 do
+    l := s.[i] :: !l
+  done;
+  !l

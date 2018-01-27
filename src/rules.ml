@@ -4,6 +4,10 @@ let int_of_orientation o = match o with
   | H -> 0
   | V -> 1
 
+let inv_orientation o = match o with
+  |H -> V
+  |V -> H
+
 let max_nb_letters = 7
 
 type score_modifier =
@@ -44,6 +48,9 @@ let score_modifiers =
       MUL_WORD 3;NONE;NONE;NONE;MUL_LETTER 2;NONE;NONE;MUL_WORD 3|]
    |]
 
+
+
+
 (* *********************** Bag gestion ********************************* *)
 
 type letter_distrib = (char*int) list
@@ -58,6 +65,25 @@ let fr_distrib = [('_',2);('A',9);('B',2);('C',2);('D',3);('E',15);('F',2);
 let fr_points = [|1;3;3;2;1;4;2;4;1;8;10;1;2;1;1;3;8;1;1;1;1;4;10;10;10;10|]
 
 let points = fr_points
+
+let score_of_char c =
+  if  c >= 'A' && c <= 'Z' then
+    points.(int_of_char c - int_of_char 'A')
+  else
+    0
+
+
+let string_to_list s =
+  let l = ref [] in
+  for i =  String.length s - 1 downto 0 do
+    l := s.[i] :: !l
+  done;
+  !l
+
+(*returns the score of a word without taking into account modfiers*)
+let no_mul_score word =
+  List.fold_left (fun x y -> x + y) 0
+		  (List.map score_of_char (string_to_list word))
 
 (*conversion of a distribution to a randomly shuffled string*)
 let string_of_distrib distrib =
