@@ -79,6 +79,7 @@ class networkPlayer (a_name:string) (a_score:int) (a_letters:string) (serv_sock:
                   Misc.print_action_doc Format.str_formatter;
                   let str = Format.flush_str_formatter () in
                   let _ = send_substring sock str 0 (String.length str) [] in
+                  sleepf 0.5;
                   self#ask_action ()
           |Some action -> action
 
