@@ -45,19 +45,19 @@ let rec main_loop () =
 
         let a = ref (players.(i)#ask_action ()) in
         while (match !a with
-               |Action.HELP -> Misc.print_action_doc ();true
+               |Action.HELP -> Misc.print_action_doc Format.str_formatter; true
                |Action.WORD(l,c,o,w) ->
                  let letters_played =  State.is_legal l c o w in
                  if letters_played = "" then
                    begin
-                     Printf.printf
+                     Format.fprintf Format.str_formatter
                        "Le mot que vous avez joué ne respecte pas les \
                         règles du jeu.\n";
                      true
                    end
                  else if not (players.(i)#can_play letters_played) then
                    begin
-                     Printf.printf
+                     Format.fprintf Format.str_formatter
                        "Vous avez joué des lettres qui ne sont pas dans \
                         votre jeu\n";
                      true
@@ -66,7 +66,6 @@ let rec main_loop () =
                    false
 
                |_ -> false)
-
         do
           a :=  players.(i)#ask_action ()
         done;
@@ -76,6 +75,7 @@ let rec main_loop () =
         |Action.WORD(l,c,o,w) ->
           let score = State.add_word l c o w in
           players.(i)#add_to_score score
+        | _ -> ()
       end
   done;
   if not !game_finished then
