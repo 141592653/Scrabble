@@ -1,4 +1,4 @@
-PACKAGES=-package oUnit -package yojson -package extlib
+PACKAGES=-package oUnit -package yojson -package str
 BUILD=ocamlbuild -use-ocamlfind \
 	-cflags "-g -w +A"\
 	$(PACKAGES)
@@ -23,4 +23,3 @@ clean:
 
 mrproper: clean
 	rm -rf test.native scrabble.native
-

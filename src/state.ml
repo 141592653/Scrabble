@@ -259,10 +259,15 @@ let empty_board () =
   done
 
 let new_game infos =
-  let serv_sock = socket PF_INET SOCK_STREAM 0 in
-  setsockopt serv_sock SO_REUSEADDR true;
-  bind serv_sock (ADDR_INET(inet_addr_any, 14159));
-  listen serv_sock 1024;
+  (* Don't initialize network if all players are locals *)
+  let network = not (Array.for_all (fun a -> match a with | Info(b, _) -> not b) infos) in
+  let serv_sock = if network then socket PF_INET SOCK_STREAM 0 else stderr in
+  if network then begin
+      setsockopt serv_sock SO_REUSEADDR true;
+      bind serv_sock (ADDR_INET(inet_addr_any, Rules.server_port));
+      listen serv_sock 1024
+  end;
+
   turn := 0;
   Random.self_init ();
   let tmp = Array.map (fun c -> (Random.bits (), c)) infos in
