@@ -98,13 +98,19 @@ exception CantReplace
 If there are no letters, then the move is not legal.*)
 let is_legal l_arg c_arg o w_arg =
   let ((l,c),begin_w,end_w) = whole_word l_arg c_arg o (String.length w_arg) in
+  
   let w = begin_w ^ w_arg ^ end_w in
-  Printf.printf "begin:%s|end:%s|w:%s" begin_w end_w w;
-  let seen_middle = ref false in
-  (*whether the word is connected to the main component*)
-  let connected = ref false in 
-  let used_letters = ref "" in
+  
   try
+    let upper_w = String.uppercase_ascii w in 
+    (*if the word is not found raises an exception wich will be caught later*)
+    if not (Array.exists (fun w_dict -> upper_w = w_dict) Rules.dictionary) then
+      failwith ("Le mot "^w^" n'est pas dans l'officiel du scrabble.\n");
+	       
+    let seen_middle = ref false in
+    (*whether the word is connected to the main component*)
+    let connected = ref false in 
+    let used_letters = ref "" in
     for i = 0 to String.length w - 1 do
       let (l',c') = state_pos_of_word_pos l c o i in
       if board.(l').(c') = ' ' then
@@ -118,15 +124,14 @@ let is_legal l_arg c_arg o w_arg =
         seen_middle := true
     done;
     if (!connected && board.(7).(7) <> ' ') ||
-       !seen_middle then
+	 !seen_middle then
       (*if this is not the first move or (7,7) was seen*)
       !used_letters
-    else if not !connected then
-      failwith "not connected"
     else
-      "µ"
+      ""
       
   with
+  |Failure s -> Printf.printf "%s" s;""
   | _ -> ""
 
 (* ********************** Json parsing **************************** *)
@@ -266,9 +271,11 @@ let new_game infos =
   for i = 0 to nb_names - 1 do
     match infos.(i) with
     | Info(true, name) -> (* Network  player *)
-       (!players).(i) <- new Player.networkPlayer name 0 (bag#pick_letters Rules.max_nb_letters) serv_sock
+       (!players).(i) <- new Player.networkPlayer name 0
+			     (bag#pick_letters Rules.max_nb_letters) serv_sock
     | Info(false, name) -> (* Local player *)
-       (!players).(i) <- new Player.humanPlayer name 0 (bag#pick_letters Rules.max_nb_letters)
+       (!players).(i) <- new Player.humanPlayer name 0
+			     (bag#pick_letters Rules.max_nb_letters)
   done;
   empty_board ()
 
