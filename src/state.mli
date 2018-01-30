@@ -34,6 +34,9 @@
 (** Player info: network player * name *)
 type player_info = Info of bool * string
 
+(**The bag of letters*)
+val bag : Rules.bag
+				   
 (** Nouvelle partie *)
 val new_game : player_info array -> unit
 

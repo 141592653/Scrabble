@@ -133,3 +133,9 @@ let string_to_list s =
   done;
   !l
 
+
+(*deletes a character in a string*)
+let delete_char s c =
+  let i = String.index s c in
+  (String.sub s 0 i)^
+    (String.sub s (i+1) (String.length s - i - 1)) 

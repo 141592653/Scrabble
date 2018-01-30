@@ -8,10 +8,19 @@ class virtual player (a_name:string) (a_score:int) (a_letters:string) =
     val mutable score = a_score
     val mutable letters = a_letters
     val mutable given_up = false
-    method virtual play : string -> unit
     method virtual ask_action : unit -> Action.action
     method virtual network_player : bool
     method virtual send_game : string -> unit
+
+    (*we do not verify te inclusion. It is done  by can_play*)
+    method play s =
+      (*try*)
+	  for i = 0 to String.length s - 1 do
+	    letters <- Misc.delete_char letters s.[i]
+	  done
+      (*with
+      | _ -> failwith "You should first use can_play."*)
+      
     method get_name = name
     method get_letters = letters
     method get_score = score
@@ -25,7 +34,7 @@ class virtual player (a_name:string) (a_score:int) (a_letters:string) =
       else
         letters <- letters ^ s
 
-    method letters_missing  =
+    method missing_letters  =
       Rules.max_nb_letters - String.length letters
 
     method can_play s =
@@ -63,7 +72,6 @@ class humanPlayer (a_name:string) (a_score:int) (a_letters:string) =
               self#ask_action ()
       |Some a -> a
 
-    method play s = print_string s
     method send_game str = Format.fprintf Format.std_formatter "%s\n\n" str
     method network_player = false
   end
@@ -82,7 +90,6 @@ class networkPlayer (a_name:string) (a_score:int) (a_letters:string) (serv_sock:
   object (self)
     inherit player name a_score a_letters
     val mutable sock = s
-    method play str = print_string str
 
     method ask_action () =
       let your_turn_msg = "\nà vous de jouer !\n" in
@@ -97,7 +104,7 @@ class networkPlayer (a_name:string) (a_score:int) (a_letters:string) (serv_sock:
           let play_bytes = create 100 in
           let size = recv sock play_bytes 0 100 [] in
 
-          if size = O then begin
+          if size = 0 then begin
               Printf.printf "Le joueur %s s'est déconnecté\n%!" name;
               given_up <- true;
               Action.GIVE_UP
