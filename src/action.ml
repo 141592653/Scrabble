@@ -34,7 +34,6 @@ let parse_word s =
   in
   (*number of the column*)
   let col = int_of_string (String.sub s 1 num_length) - 1 in
-  Printf.printf "%d" col;
   (line,col,orient,
    String.sub s (3+num_length) (String.length s - 3 - num_length))
 

@@ -29,6 +29,7 @@ let ask_new_game () =
 
 
 let rec main_loop () =
+  Sys.command "clear";
   let game_finished = ref true in
   let players = State.get_players () in
 
@@ -42,7 +43,6 @@ let rec main_loop () =
         players.(i)#send_game (Format.flush_str_formatter ());
 
         Printf.printf "\n\n";
-
         let a = ref (players.(i)#ask_action ()) in
         while (match !a with
                |Action.HELP -> Misc.print_action_doc Format.str_formatter; true
@@ -50,14 +50,14 @@ let rec main_loop () =
                  let letters_played =  State.is_legal l c o w in
                  if letters_played = "" then
                    begin
-                     Format.fprintf Format.str_formatter
+                     Printf.printf
                        "Le mot que vous avez joué ne respecte pas les \
                         règles du jeu.\n";
                      true
                    end
                  else if not (players.(i)#can_play letters_played) then
                    begin
-                     Format.fprintf Format.str_formatter
+                     Printf.printf
                        "Vous avez joué des lettres qui ne sont pas dans \
                         votre jeu\n";
                      true
@@ -73,13 +73,18 @@ let rec main_loop () =
         match !a with
         |Action.PICK -> ()
         |Action.WORD(l,c,o,w) ->
+	  let letters_played =  State.is_legal l c o w in
           let score = State.add_word l c o w in
+	  players.(i)#play letters_played;
+	  players.(i)#pick
+			(State.bag#pick_letters
+				     (players.(i)#missing_letters));
           players.(i)#add_to_score score
         | _ -> ()
       end
   done;
   if not !game_finished then
-    main_loop()
+      main_loop()
 
 open Unix
 
@@ -103,7 +108,7 @@ let rec main_loop_network () =
     let n = recv sock buffer 0 4096 [] in
     let str = Bytes.sub_string buffer 0 n in
 
-    if Misc.contains str "\nà vous de jouer !\n" then begin
+    if Misc.contains str "\nÀ vous de jouer !\n" then begin
         Printf.printf "[Entrez une action] ";
         let rec aux () =
           let answer = read_line () in if (String.length answer) = 0 then aux () else answer

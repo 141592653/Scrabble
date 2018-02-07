@@ -125,9 +125,23 @@ let contains s1 s2 =
   try ignore (Str.search_forward re s1 0); true
   with Not_found -> false
 
+
 let string_to_list s =
   let l = ref [] in
   for i =  String.length s - 1 downto 0 do
     l := s.[i] :: !l
   done;
   !l
+
+
+(*deletes a character in a string*)
+let delete_char s c =
+  let i = if c >='A'&& c <= 'Z' then
+	    String.index s c
+	  else if c >='a'&& c <= 'z' then
+	    String.index s '_'
+	  else
+	    failwith "Unknown character played"
+  in
+  (String.sub s 0 i)^
+    (String.sub s (i+1) (String.length s - i - 1)) 

@@ -17,7 +17,7 @@ class virtual player : string -> int -> string ->
     val given_up : bool
 
     (** Asks the player to play *)
-    method virtual play : string -> unit
+    method play : string -> unit
 
     (** How to ask to the player to play *)
     method virtual ask_action : unit -> Action.action
@@ -50,7 +50,7 @@ class virtual player : string -> int -> string ->
     method pick : string -> unit
 
     (** Number of letters missing for having enough letters *)
-    method letters_missing : int
+    method missing_letters : int
 
     (** State whether the set of letters of the argument is included
       * in the set of letters of the player*)

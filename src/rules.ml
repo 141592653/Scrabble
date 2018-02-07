@@ -8,6 +8,38 @@ let inv_orientation o = match o with
   |H -> V
   |V -> H
 
+		     
+let load_dictionary file =
+  let in_chan = open_in file in
+  let length = ref 0 in 
+  begin
+    try
+     while true do
+       
+       ignore (input_line in_chan);
+       length := !length + 1
+     done
+    with
+    |End_of_file ->
+      ()
+  end;
+  let dict = Array.make !length "" in
+  let in_chan = open_in file in
+  for i = 0 to !length - 1 do
+    dict.(i) <- input_line in_chan
+  done;
+  (* I don't understand why but the character 13 appears at the 
+   * end of every word. We need to remove it*)
+  Array.map (fun w -> String.sub w 0 (String.length w-1))  dict
+ 
+      
+
+
+		  
+
+let dictionary = load_dictionary "ods.txt"
+		       
+
 let max_nb_letters = 7
 
 type score_modifier =
@@ -83,7 +115,8 @@ let string_to_list s =
 (*returns the score of a word without taking into account modfiers*)
 let no_mul_score word =
   List.fold_left (fun x y -> x + y) 0
-		  (List.map score_of_char (string_to_list word))
+		 (List.map score_of_char (string_to_list word))
+
 
 (*conversion of a distribution to a randomly shuffled string*)
 let string_of_distrib distrib =

@@ -34,9 +34,14 @@
 (** Player info: network player * name *)
 type player_info = Info of bool * string
 
-(** Nouvelle partie *)
+(**The bag of letters*)
+val bag : Rules.bag
+				   
+(** Create a new game *)
 val new_game : player_info array -> unit
-
+				      
+(** Load a game *)
+val open_game : string -> unit
 
 (**this function returns the letters used from the players game.
 If there are no letters, then the move is not legal.*)
@@ -45,16 +50,16 @@ val is_legal : int -> int -> Rules.orientation -> string -> string
 (** Add a word to the board and returns the number of points made*)
 val add_word : int -> int -> Rules.orientation -> string -> int
 
-(** Nom de la map *)
+(** name of the map *)
 val get_name : unit -> string
 
-(** Tableau représentant le plateau *)
+(** array representing the board *)
 val board : char array array
 
-(** Tableau contenant l'ensemble des joueurs *)
+(** array containing all the players *)
 val get_players : unit -> Player.player array
 
-(** Numéro du joueur dont c'est le tour *)
+(** index of the player who is to play now *)
 val get_turn : unit -> int
 
 (** Tests functions *)

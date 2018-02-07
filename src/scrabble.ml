@@ -5,17 +5,33 @@ let main_func file =
   Printf.printf "*********************** Bienvenue dans Scrabble \
                  **************************** \n";
   Printf.printf "Voulez vous créer une nouvelle partie ?\n";
-  if Misc.ask_bool Format.std_formatter then begin
+  if Misc.ask_bool Format.std_formatter then
+    begin
       Ui.ask_new_game ();
       Ui.main_loop ()
-  end else begin
+    end
+  else
+    begin
       Printf.printf "Voulez vous rejoindre une partie en ligne ?\n";
-      if Misc.ask_bool Format.std_formatter then begin
+      if Misc.ask_bool Format.std_formatter then
           Ui.main_loop_network ()
-      end else begin
-          Printf.printf "Ooooh ='(\n";
-       end;
-  end
+      else 
+        begin
+	  Printf.printf "Entrez le chemin relatif menant au \
+			 fichier que vous voulez charger : \n";
+	  let found_file = ref false in
+	  while not !found_file do
+	    found_file :=
+	      try
+		State.open_game (Misc.ask_string ());
+		true
+	      with
+	      |Failure s | Sys_error s -> Printf.printf "%s\n" s; false
+	  done;
+	  Ui.main_loop ()
+	end  
+    end
+  
 
 
 let main () =

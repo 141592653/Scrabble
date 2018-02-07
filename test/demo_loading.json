@@ -1,0 +1,13 @@
+{
+    "name" : "Demo loading",
+    "players" :
+    {
+	"diaseis" : {
+	    "score" : 380,
+	    "letters" : "DEES_FP"
+	}
+    },
+    "map" : "test/crash.txt",
+    "bag" : "SRBETDSSECAANHFR_NNETAARVOMTOOAESRYUTAPVHLIECPDL",
+    "turn" : 1
+}
