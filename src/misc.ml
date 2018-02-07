@@ -78,7 +78,7 @@ let pp_board f g =
     end
 
 let not_understood f =
-  Format.fprintf f "Je n'ai pas compris ce que vous venez de taper.\n"
+  Format.fprintf f "Je n'ai pas compris ce que vous venez de taper.\n%!"
 
 let rec ask_bool f  =
   Printf.printf "[O/o pour Oui, N/n pour Non] ";

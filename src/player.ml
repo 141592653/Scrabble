@@ -97,12 +97,11 @@ class networkPlayer (a_name:string) (a_score:int) (a_letters:string) (serv_sock:
           let play_bytes = create 100 in
           let size = recv sock play_bytes 0 100 [] in
 
-          if size = O then begin
+          if size <= 0 then begin
               Printf.printf "Le joueur %s s'est déconnecté\n%!" name;
               given_up <- true;
               Action.GIVE_UP
           end else begin
-
               let action = Action.parse_action (sub_string play_bytes 0 size) in
               match action with
               |None -> Misc.not_understood Format.str_formatter;

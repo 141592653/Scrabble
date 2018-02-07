@@ -67,7 +67,7 @@ let rec main_loop () =
 
                |_ -> false)
         do
-          a :=  players.(i)#ask_action ()
+          a := players.(i)#ask_action ()
         done;
 
         match !a with
