@@ -53,12 +53,14 @@ let add_word l_arg c_arg o w_arg =
   let w = begin_w ^ w_arg ^ end_w in
   let score = ref 0 in
   let word_mul = ref 1 in
+  let letter_used = ref 0 in 
   for i = 0 to String.length w - 1 do
     let (l',c') = state_pos_of_word_pos l c o i in
     let val_letter = Rules.score_of_char w.[i] in 
 
     if board.(l').(c') = ' ' then
       begin
+	letter_used := !letter_used + 1;
         board.(l').(c') <- w.[i];
         begin
 	  let (_,begin_cross,end_cross) =
@@ -84,7 +86,10 @@ let add_word l_arg c_arg o w_arg =
     else
       score := !score + val_letter;
   done;
-  !score * !word_mul
+  if !letter_used = Rules.max_nb_letters then 
+    !score * !word_mul + 50 (* if it's a scrabble*)
+  else
+    !score * !word_mul
 
 	    
 
@@ -119,6 +124,15 @@ let is_legal l_arg c_arg o w_arg =
         raise CantReplace
       else
 	connected := true;
+
+      (*if we write next to an already there word*)
+      let (cross,begin_cross,end_cross) =
+	whole_word l' c' (Rules.inv_orientation o) 1 in
+      if String.length begin_cross + String.length end_cross > 0 then
+	connected := true;
+      let upper_ww = String.uppercase_ascii (begin_cross ^ cross ^ end_cross) in 
+      if not (Array.exists (fun w_dict -> upper_ww = w_dict) Rules.dictionary) then
+	failwith ("Le mot "^w^" n'est pas dans l'officiel du scrabble.\n");
 
       if (l',c') = (7,7) then
         seen_middle := true
@@ -211,7 +225,7 @@ let json_from_file s =
     Yojson.Basic.from_channel (open_in s)
   with
   |Json_error log ->
-    failwith ("The file is not a json file.\
+    failwith ("The file is not a json file. \
                Here is the log of the json parser : " ^ log)
 
 let board_line_of_string s =

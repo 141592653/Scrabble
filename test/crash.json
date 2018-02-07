@@ -1,0 +1,13 @@
+{
+    "name" : "Crash1",
+    "players" :
+    {
+	"diaseis" : {
+	    "score" : 24,
+	    "letters" : "E_GMOIW"
+	}
+    },
+    "map" : "test/crash.txt",
+    "bag" : "MJNUNIEDOLOAKGUQUIITNAZSMILESEEETUIERLEFBIRUAESRBETDSSECAANHFR_NNETAARVOMTOOAESRYUTAPVHLIECPDL",
+    "turn" : 1
+}

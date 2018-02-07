@@ -29,6 +29,7 @@ let ask_new_game () =
 
 
 let rec main_loop () =
+  Sys.command "clear";
   let game_finished = ref true in
   let players = State.get_players () in
 
@@ -42,7 +43,6 @@ let rec main_loop () =
         players.(i)#send_game (Format.flush_str_formatter ());
 
         Printf.printf "\n\n";
-
         let a = ref (players.(i)#ask_action ()) in
         while (match !a with
                |Action.HELP -> Misc.print_action_doc Format.str_formatter; true
@@ -84,7 +84,7 @@ let rec main_loop () =
       end
   done;
   if not !game_finished then
-    main_loop()
+      main_loop()
 
 open Unix
 
