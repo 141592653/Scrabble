@@ -126,15 +126,19 @@ let is_legal l_arg c_arg o w_arg =
 	connected := true;
 
       (*if we write next to an already there word*)
-      let (cross,begin_cross,end_cross) =
+      let (_,begin_cross,end_cross) =
 	whole_word l' c' (Rules.inv_orientation o) 1 in
       if String.length begin_cross + String.length end_cross > 0 then
-	connected := true;
-      let upper_ww = String.uppercase_ascii
-		       (begin_cross ^
-			  (String.make 1 board.(l').(c') ) ^ end_cross) in 
-      if not (Array.exists (fun w_dict -> upper_ww = w_dict) Rules.dictionary) then
-	failwith ("Le mot "^w^" n'est pas dans l'officiel du scrabble.\n");
+	begin
+	  connected := true;
+	  let upper_ww = String.uppercase_ascii
+			   (begin_cross ^
+			      (String.make 1 w.[i] ) ^ end_cross) in 
+	  if not (Array.exists
+		    (fun w_dict -> upper_ww = w_dict) Rules.dictionary) then
+	    failwith ("Le mot "^
+			upper_ww^" n'est pas dans l'officiel du scrabble.\n")
+	end;
 
       if (l',c') = (7,7) then
         seen_middle := true
