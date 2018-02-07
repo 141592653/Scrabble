@@ -107,7 +107,7 @@ let is_legal l_arg c_arg o w_arg =
     let upper_w = String.uppercase_ascii w in
     (*if the word is not found raises an exception wich will be caught later*)
     if not (Array.exists (fun w_dict -> upper_w = w_dict) Rules.dictionary) then
-      failwith ("Le mot "^w^" n'est pas dans l'officiel du scrabble.\n");
+      failwith ("Le mot "^w^" n'est pas dans l'officiel du scrabble.");
 
     let seen_middle = ref false in
     (*whether the word is connected to the main component*)
@@ -130,13 +130,12 @@ let is_legal l_arg c_arg o w_arg =
 	  connected := true;
 	  let upper_ww = String.uppercase_ascii
 			   (begin_cross ^
-			      (String.make 1 w.[i] ) ^ end_cross) in 
+			      (String.make 1 w.[i] ) ^ end_cross) in
 	  if not (Array.exists
 		    (fun w_dict -> upper_ww = w_dict) Rules.dictionary) then
 	    failwith ("Le mot "^
 			upper_ww^" n'est pas dans l'officiel du scrabble.\n")
 	end;
-
 
       if (l',c') = (7,7) then
         seen_middle := true
@@ -149,7 +148,7 @@ let is_legal l_arg c_arg o w_arg =
       ""
 
   with
-  |Failure s -> Printf.printf "%s" s;""
+  |Failure s -> Format.fprintf Format.str_formatter "%s" s; ""
   | _ -> ""
 
 (* ********************** Json parsing **************************** *)

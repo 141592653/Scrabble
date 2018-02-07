@@ -92,7 +92,7 @@ class networkPlayer (a_name:string) (a_score:int) (a_letters:string) (serv_sock:
     val mutable sock = s
 
     method ask_action () =
-      let your_turn_msg = "\nà vous de jouer !\n" in
+      let your_turn_msg = "\nC'est votre tour !\n" in
       let rc = send_substring sock your_turn_msg 0 (String.length your_turn_msg) [] in
       if rc <= 0 then begin
           Printf.printf "Le joueur %s s'est déconnecté\n%!" name;

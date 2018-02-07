@@ -50,9 +50,9 @@ let rec main_loop () =
                  let letters_played =  State.is_legal l c o w in
                  if letters_played = "" then
                    begin
-                     Printf.printf
-                       "Le mot que vous avez joué ne respecte pas les \
-                        règles du jeu.\n";
+                     let str = "Le mot que vous avez joué ne respecte pas les \
+                                règles du jeu :\n" ^ (Format.flush_str_formatter ()) in
+                     players.(i)#send_game str;
                      true
                    end
                  else if not (players.(i)#can_play letters_played) then
@@ -112,7 +112,7 @@ let rec main_loop_network () =
     let n = recv sock buffer 0 4096 [] in
     let str = Bytes.sub_string buffer 0 n in
 
-    if Misc.contains str "\nÀ vous de jouer !\n" then begin
+    if Misc.contains str "\nC'est votre tour !\n" then begin
         Printf.printf "[Entrez une action] ";
         let rec aux () =
           let answer = read_line () in if (String.length answer) = 0 then aux () else answer
