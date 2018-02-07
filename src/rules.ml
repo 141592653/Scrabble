@@ -149,6 +149,11 @@ class bag (distrib : letter_distrib) =
         _ -> let ret = bag_str in
             bag_str <- "";
             ret
+
+
+    (*not gooooooooooooooooooooooooooooooooooood*)
+    method put_back_letters letters =
+      bag_str <- bag_str ^ letters
   end
 
 let server_port = 14159

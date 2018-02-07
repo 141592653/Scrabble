@@ -138,7 +138,7 @@ let string_to_list s =
 let delete_char s c =
   let i = if c >='A'&& c <= 'Z' then
 	    String.index s c
-	  else if c >='a'&& c <= 'z' then
+	  else if c >='a'&& c <= 'z' || c = '_'then
 	    String.index s '_'
 	  else
 	    failwith "Unknown character played"
