@@ -130,7 +130,9 @@ let is_legal l_arg c_arg o w_arg =
 	whole_word l' c' (Rules.inv_orientation o) 1 in
       if String.length begin_cross + String.length end_cross > 0 then
 	connected := true;
-      let upper_ww = String.uppercase_ascii (begin_cross ^ cross ^ end_cross) in 
+      let upper_ww = String.uppercase_ascii
+		       (begin_cross ^
+			  (String.make 1 board.(l').(c') ) ^ end_cross) in 
       if not (Array.exists (fun w_dict -> upper_ww = w_dict) Rules.dictionary) then
 	failwith ("Le mot "^w^" n'est pas dans l'officiel du scrabble.\n");
 
