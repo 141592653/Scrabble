@@ -20,16 +20,15 @@ let state_pos_of_word_pos l c o i =
   let o' = Rules.int_of_orientation o in
   (l+i*o',c + i*(1-o'))
 
-    
+
 let whole_word l c o length=
   let begin_word = ref "" in
   let i = ref (-1) in
   (*moving backward*)
   while (let (l',c') = state_pos_of_word_pos l c o !i in
-	 l' >= 0 && c' >= 0 &&
-	  board.(l').(c') <> ' ') do
+         l' >= 0 && c' >= 0 && board.(l').(c') <> ' ') do
     let (l',c') = state_pos_of_word_pos l c o !i in
-    begin_word :=  (String.make 1 board.(l').(c')) ^ !begin_word ;
+    begin_word := (String.make 1 board.(l').(c')) ^ !begin_word;
     i := !i - 1
   done;
   let fst_pos = state_pos_of_word_pos l c o (!i + 1) in
@@ -38,8 +37,7 @@ let whole_word l c o length=
   let end_word = ref "" in
   (*moving forward*)
   while (let (l',c') = state_pos_of_word_pos l c o !i in
-	 l' < Array.length board && c' < Array.length board.(0) &&
-	  board.(l').(c') <> ' ') do
+         l' < Array.length board && c' < Array.length board.(0) && board.(l').(c') <> ' ') do
     let (l',c') = state_pos_of_word_pos l c o !i in
     end_word :=  !end_word ^ (String.make 1 board.(l').(c'))  ;
     i := !i + 1
@@ -53,10 +51,10 @@ let add_word l_arg c_arg o w_arg =
   let w = begin_w ^ w_arg ^ end_w in
   let score = ref 0 in
   let word_mul = ref 1 in
-  let letter_used = ref 0 in 
+  let letter_used = ref 0 in
   for i = 0 to String.length w - 1 do
     let (l',c') = state_pos_of_word_pos l c o i in
-    let val_letter = Rules.score_of_char w.[i] in 
+    let val_letter = Rules.score_of_char w.[i] in
 
     if board.(l').(c') = ' ' then
       begin
@@ -66,7 +64,7 @@ let add_word l_arg c_arg o w_arg =
 	  let (_,begin_cross,end_cross) =
 	    whole_word l' c' (Rules.inv_orientation o) 1 in
 	  let cross = begin_cross ^ (String.make 1 w.[i]) ^ end_cross in
-	  let cross_length = String.length cross in 
+	  let cross_length = String.length cross in
           match Rules.score_modifiers.(l').(c') with
           |Rules.NONE ->
 	    score := !score + val_letter;
@@ -86,35 +84,34 @@ let add_word l_arg c_arg o w_arg =
     else
       score := !score + val_letter;
   done;
-  if !letter_used = Rules.max_nb_letters then 
+  if !letter_used = Rules.max_nb_letters then
     !score * !word_mul + 50 (* if it's a scrabble*)
   else
     !score * !word_mul
 
-	    
-
-    
 
 exception CantReplace
-
-
 
 (*this function returns the letters used from the players game.
 If there are no letters, then the move is not legal.*)
 let is_legal l_arg c_arg o w_arg =
   let ((l,c),begin_w,end_w) = whole_word l_arg c_arg o (String.length w_arg) in
-  
+
   let w = begin_w ^ w_arg ^ end_w in
-  
+  (* Printf.printf "begin:%s|end:%s|w:%s" begin_w end_w w; *)
+  let seen_middle = ref false in
+  (* whether the word is connected to the main component *)
+  let connected = ref false in
+  let used_letters = ref "" in
   try
-    let upper_w = String.uppercase_ascii w in 
+    let upper_w = String.uppercase_ascii w in
     (*if the word is not found raises an exception wich will be caught later*)
     if not (Array.exists (fun w_dict -> upper_w = w_dict) Rules.dictionary) then
       failwith ("Le mot "^w^" n'est pas dans l'officiel du scrabble.\n");
-	       
+
     let seen_middle = ref false in
     (*whether the word is connected to the main component*)
-    let connected = ref false in 
+    let connected = ref false in
     let used_letters = ref "" in
     for i = 0 to String.length w - 1 do
       let (l',c') = state_pos_of_word_pos l c o i in
@@ -140,6 +137,7 @@ let is_legal l_arg c_arg o w_arg =
 			upper_ww^" n'est pas dans l'officiel du scrabble.\n")
 	end;
 
+
       if (l',c') = (7,7) then
         seen_middle := true
     done;
@@ -149,7 +147,7 @@ let is_legal l_arg c_arg o w_arg =
       !used_letters
     else
       ""
-      
+
   with
   |Failure s -> Printf.printf "%s" s;""
   | _ -> ""
