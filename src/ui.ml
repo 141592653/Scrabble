@@ -70,7 +70,11 @@ let rec main_loop () =
         done;
 
         match !a with
-        |Action.PICK -> ()
+        |Action.PICK -> State.bag#put_back_letters players.(i)#get_letters;
+			players.(i)#play players.(i)#get_letters;
+			players.(i)#pick
+				      (State.bag#pick_letters
+						   (players.(i)#missing_letters))
         |Action.WORD(l,c,o,w) ->
 	  let letters_played =  State.is_legal l c o w in
           let score = State.add_word l c o w in
