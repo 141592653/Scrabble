@@ -132,7 +132,7 @@ let is_legal l_arg c_arg o w_arg =
 			   (begin_cross ^
 			      (String.make 1 w.[i] ) ^ end_cross) in
 	  if not (Array.exists
-		    (fun w_dict -> upper_ww = w_dict) Rules.dictionary) then
+		  (fun w_dict -> upper_ww = w_dict) Rules.dictionary) then
 	    failwith ("Le mot "^
 			upper_ww^" n'est pas dans l'officiel du scrabble.\n")
 	end;
